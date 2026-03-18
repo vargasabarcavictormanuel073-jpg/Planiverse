@@ -181,8 +181,8 @@ export default function RegisterStep({
               type="email"
               name="email"
               value={values.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
+              onChange={(e) => handleChange('email', e.target.value)}
+              onBlur={() => handleBlur('email')}
               disabled={isLoading}
               placeholder="tu@email.com"
               className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400 ${
@@ -205,8 +205,8 @@ export default function RegisterStep({
               type="password"
               name="password"
               value={values.password}
-              onChange={handleChange}
-              onBlur={handleBlur}
+              onChange={(e) => handleChange('password', e.target.value)}
+              onBlur={() => handleBlur('password')}
               disabled={isLoading}
               placeholder="Mínimo 6 caracteres"
               className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400 ${
@@ -229,8 +229,8 @@ export default function RegisterStep({
               type="password"
               name="confirmPassword"
               value={values.confirmPassword}
-              onChange={handleChange}
-              onBlur={handleBlur}
+              onChange={(e) => handleChange('confirmPassword', e.target.value)}
+              onBlur={() => handleBlur('confirmPassword')}
               disabled={isLoading}
               placeholder="Repite tu contraseña"
               className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400 ${
