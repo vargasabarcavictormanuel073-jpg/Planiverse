@@ -229,3 +229,16 @@ html.dark .space-y-3 svg {
   color: var(--color-primary) !important;
   opacity: 1 !important;
 }
+
+/* Inputs siempre visibles */
+input, textarea, select {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
