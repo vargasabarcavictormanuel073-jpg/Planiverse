@@ -1,0 +1,34 @@
+{
+  "name": "planiverse-pwa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Planiverse - Tu organizador personal (PWA)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "verify-pwa": "node verificar-pwa.js",
+    "dev:mobile": "next dev --hostname 0.0.0.0",
+    "analyze": "echo 'Abre Chrome DevTools > Lighthouse para analizar PWA'",
+    "pre-deploy": "node scripts/pre-deployment-check.js",
+    "deploy:check": "npm run pre-deploy && npm run build"
+  },
+  "dependencies": {
+    "firebase": "^12.10.0",
+    "jspdf": "^4.2.0",
+    "next": "^15.5.13",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

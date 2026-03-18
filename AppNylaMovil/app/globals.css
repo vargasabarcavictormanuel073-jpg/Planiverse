@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* Theme system CSS variables - Will be set by JavaScript based on user role */
+  --color-primary: #6B7280;
+  --color-primary-hover: #4B5563;
+  --color-primary-active: #374151;
+  --color-secondary: #9CA3AF;
+  --color-accent: #D1D5DB;
+  --color-background: #F9FAFB;
+  --color-text: #1E293B;
+  --color-text-secondary: #64748B;
+
+  /* Theme aliases for compatibility */
+  --theme-primary: var(--color-primary);
+  --theme-primary-hover: var(--color-primary-hover);
+  --theme-background: var(--color-background);
+}
+
+/* Dark mode styles */
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --color-text: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-background: #1e293b;
+}
+
+.dark body {
+  background: #0f172a !important;
+  color: #f1f5f9;
+}
+
+.dark .bg-gray-50 {
+  background-color: #0f172a !important;
+}
+
+/* Dark mode input styles */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #475569 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Stat Cards - Modo Claro (por defecto) */
+.stat-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.stat-card-title {
+  color: #111827;
+}
+
+.stat-card-subtitle {
+  color: #6b7280;
+}
+
+/* Quick Access Card - Modo Claro (por defecto) */
+.quick-access-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+/* Modo Oscuro - Stat Cards */
+.dark .stat-card {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+.dark .stat-card-title {
+  color: #f1f5f9;
+}
+
+.dark .stat-card-subtitle {
+  color: #cbd5e1;
+}
+
+/* Modo Oscuro - Quick Access Card */
+.dark .quick-access-card {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+/* Modo Oscuro - QuickLink text */
+.dark .quick-access-card a span {
+  color: #f1f5f9 !important;
+}
+
+/* Icon background - Modo Claro */
+.icon-background {
+  background-color: #F9FAFB;
+}
+
+/* Icon background - Modo Oscuro */
+.dark .icon-background {
+  background-color: #1e293b !important;
+}
+
+/* Modo Oscuro - Recuadros (excluyendo inputs) */
+.dark .bg-white:not(input):not(textarea):not(select) {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-gray-100:not(input):not(textarea):not(select) {
+  background-color: #334155 !important;
+}
+
+.dark .bg-gray-200:not(input):not(textarea):not(select) {
+  background-color: #475569 !important;
+}
+
+.dark .bg-red-50 {
+  background-color: #7f1d1d !important;
+}
+
+/* Modo Oscuro - Textos (excluyendo inputs) */
+.dark .text-gray-900:not(input):not(textarea):not(select) {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-gray-800 {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-gray-700:not(input):not(textarea):not(select) {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-gray-600 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-gray-500 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-red-800 {
+  color: #fca5a5 !important;
+}
+
+/* Modo Oscuro - Bordes */
+.dark .border-gray-200 {
+  border-color: #334155 !important;
+}
+
+.dark .border-gray-300 {
+  border-color: #475569 !important;
+}
+
+.dark .border-red-200 {
+  border-color: #991b1b !important;
+}
+
+/* Modo Oscuro - Hovers */
+.dark .hover\:bg-gray-200:hover {
+  background-color: #475569 !important;
+}
+
+.dark .hover\:bg-gray-300:hover {
+  background-color: #64748b !important;
+}
+
+.dark .hover\:bg-blue-50:hover {
+  background-color: #1e3a8a !important;
+}
+
+.dark .hover\:bg-green-50:hover {
+  background-color: #14532d !important;
+}
+
+.dark .hover\:bg-red-50:hover {
+  background-color: #7f1d1d !important;
+}
+
+/* Forzar fondo blanco en modo claro para contenedores principales */
+html:not(.dark) .bg-white {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) .bg-gray-50 {
+  background-color: #f9fafb !important;
+}
+
+/* Todo el texto en negrita */
+* {
+  font-weight: 700 !important;
+}
+
+/* Textos grises forzados a negro en modo claro */
+html:not(.dark) .text-gray-400,
+html:not(.dark) .text-gray-500,
+html:not(.dark) .text-gray-600,
+html:not(.dark) .text-gray-700,
+html:not(.dark) .text-gray-800,
+html:not(.dark) .text-gray-900 {
+  color: #111827 !important;
+}
+
+/* Iconos SVG visibles en ambos modos (excepto navbar) */
+html:not(.dark) .stat-card svg,
+html:not(.dark) .quick-access-card svg,
+html:not(.dark) form svg,
+html:not(.dark) .space-y-3 svg {
+  color: var(--color-primary) !important;
+  opacity: 1 !important;
+}
+
+html.dark .stat-card svg,
+html.dark .quick-access-card svg,
+html.dark form svg,
+html.dark .space-y-3 svg {
+  color: var(--color-primary) !important;
+  opacity: 1 !important;
+}
