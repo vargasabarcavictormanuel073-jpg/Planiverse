@@ -39,40 +39,7 @@ export default function UserDataStep({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMigrating, setIsMigrating] = useState(false);
 
-  // Cargar datos existentes del perfil si existen
-  useEffect(() => {
-    const loadProfile = async () => {
-      if (!userId) {
-        console.warn('No userId provided');
-        return;
-      }
-      
-      try {
-        interface ProfileData {
-          fullName?: string;
-          nickname?: string;
-          age?: number;
-        }
-        
-        // Orden correcto: collectionName, docId, userId
-        const profileData = await FirestoreService.read<ProfileData>('profile', 'data', userId);
-        if (profileData) {
-          setFieldValue('fullName', profileData.fullName || '');
-          setFieldValue('nickname', profileData.nickname || '');
-          setFieldValue('age', profileData.age?.toString() || '');
-        }
-      } catch (err) {
-        console.error('Error al cargar datos del perfil:', err);
-        // No mostrar error al usuario, simplemente no cargar datos previos
-      }
-    };
-    
-    if (userId) {
-      loadProfile();
-    }
-  }, [userId, setFieldValue]);
-
-  // Configurar validación del formulario
+  // Configurar validación del formulario PRIMERO (antes de cualquier useEffect que use setFieldValue)
   const {
     values,
     errors,
@@ -105,6 +72,34 @@ export default function UserDataStep({
       },
     }
   );
+
+  // Cargar datos existentes del perfil si existen (DESPUÉS del hook para que setFieldValue esté disponible)
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!userId) return;
+      
+      try {
+        interface ProfileData {
+          fullName?: string;
+          nickname?: string;
+          age?: number;
+        }
+        
+        const profileData = await FirestoreService.read<ProfileData>('profile', 'data', userId);
+        if (profileData) {
+          setFieldValue('fullName', profileData.fullName || '');
+          setFieldValue('nickname', profileData.nickname || '');
+          setFieldValue('age', profileData.age?.toString() || '');
+        }
+      } catch (err) {
+        console.error('Error al cargar datos del perfil:', err);
+      }
+    };
+    
+    if (userId) {
+      loadProfile();
+    }
+  }, [userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Maneja el envío del formulario de datos personales

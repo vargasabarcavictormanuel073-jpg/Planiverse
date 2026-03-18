@@ -230,35 +230,37 @@ html.dark .space-y-3 svg {
   opacity: 1 !important;
 }
 
-/* Inputs siempre visibles */
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-textarea,
-select {
+/* Inputs siempre visibles - máxima especificidad */
+html body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html body textarea,
+html body select {
   background-color: #ffffff !important;
   color: #111827 !important;
   -webkit-text-fill-color: #111827 !important;
   caret-color: #111827 !important;
   opacity: 1 !important;
+  font-weight: 700 !important;
 }
 
-input::placeholder,
-textarea::placeholder {
+html body input::placeholder,
+html body textarea::placeholder {
   color: #9ca3af !important;
   -webkit-text-fill-color: #9ca3af !important;
   opacity: 1 !important;
+  font-weight: 400 !important;
 }
 
-html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-html.dark textarea,
-html.dark select {
+html.dark body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html.dark body textarea,
+html.dark body select {
   background-color: #1e293b !important;
   color: #f1f5f9 !important;
   -webkit-text-fill-color: #f1f5f9 !important;
   caret-color: #f1f5f9 !important;
 }
 
-html.dark input::placeholder,
-html.dark textarea::placeholder {
+html.dark body input::placeholder,
+html.dark body textarea::placeholder {
   color: #64748b !important;
   -webkit-text-fill-color: #64748b !important;
   opacity: 1 !important;
