@@ -257,3 +257,16 @@ html.dark textarea::placeholder {
   -webkit-text-fill-color: #94a3b8 !important;
   opacity: 1 !important;
 }
+
+/* Forzar texto visible al escribir en inputs */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]) {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  caret-color: #111827 !important;
+}
+
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]) {
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  caret-color: #f1f5f9 !important;
+}
