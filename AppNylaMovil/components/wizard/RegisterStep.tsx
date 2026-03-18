@@ -98,7 +98,7 @@ export default function RegisterStep({
         setLocalError(authError.message);
         setIsLoading(false);
         if (onError) {
-          onError(authError);
+          onError(authError as import('@/lib/auth/types').AuthError);
         }
       }, 0);
       
