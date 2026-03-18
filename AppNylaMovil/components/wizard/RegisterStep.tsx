@@ -185,7 +185,7 @@ export default function RegisterStep({
               onBlur={handleBlur}
               disabled={isLoading}
               placeholder="tu@email.com"
-              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-colors ${
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400 ${
                 touched.email && errors.email
                   ? 'border-red-500 focus:border-red-600'
                   : 'border-gray-300 focus:border-blue-500'
@@ -209,7 +209,7 @@ export default function RegisterStep({
               onBlur={handleBlur}
               disabled={isLoading}
               placeholder="Mínimo 6 caracteres"
-              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-colors ${
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400 ${
                 touched.password && errors.password
                   ? 'border-red-500 focus:border-red-600'
                   : 'border-gray-300 focus:border-blue-500'
@@ -233,7 +233,7 @@ export default function RegisterStep({
               onBlur={handleBlur}
               disabled={isLoading}
               placeholder="Repite tu contraseña"
-              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-colors ${
+              className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none transition-colors text-gray-900 bg-white placeholder-gray-400 ${
                 touched.confirmPassword && errors.confirmPassword
                   ? 'border-red-500 focus:border-red-600'
                   : 'border-gray-300 focus:border-blue-500'
