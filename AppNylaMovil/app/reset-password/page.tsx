@@ -82,7 +82,11 @@ function ResetPasswordForm() {
           <div className="text-center py-4">
             <div className="text-5xl mb-4">😕</div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Enlace inválido</h2>
-            <p className="text-gray-600 mb-6">{errorMsg}</p>
+            <p className="text-gray-600 mb-4">{errorMsg}</p>
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-left">
+              <p className="text-sm font-semibold text-blue-800 mb-1">📱 ¿Estás en el teléfono?</p>
+              <p className="text-sm text-blue-700">Copia el link del correo y ábrelo directamente en <strong>Chrome</strong> o <strong>Safari</strong>, no desde la app del correo.</p>
+            </div>
             <button
               onClick={() => router.push('/')}
               className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
