@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
+import { confirmPasswordReset, verifyPasswordResetCode, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
 
 function ResetPasswordForm() {
@@ -48,6 +48,14 @@ function ResetPasswordForm() {
     setErrorMsg('');
     try {
       await confirmPasswordReset(auth, oobCode!, password);
+      // Cerrar sesión activa para que Firebase reconozca la nueva contraseña
+      try { await signOut(auth); } catch { /* ignorar */ }
+      // Limpiar localStorage para forzar login fresco
+      try {
+        localStorage.removeItem('planiverse_session');
+        localStorage.removeItem('planiverse_profiles');
+        localStorage.removeItem('planiverse_onboarding_done');
+      } catch { /* ignorar */ }
       setStatus('success');
     } catch {
       setErrorMsg('Ocurrió un error. El enlace puede haber expirado.');

@@ -55,6 +55,7 @@ export default function AuthStep({
   const [resetEmail, setResetEmail] = useState('');
   const [resetMessage, setResetMessage] = useState<string | null>(null);
   const hasProcessedAuthRef = useRef(false);
+  const loginAttemptedRef = useRef(false); // solo procesar user si el usuario intentó login
 
   /**
    * Maneja el éxito de autenticación
@@ -177,12 +178,10 @@ export default function AuthStep({
    * Efecto para manejar cambios en el usuario autenticado
    */
   useEffect(() => {
-    if (user && !hasProcessedAuthRef.current) {
-      // Usar setTimeout para evitar setState durante render
+    if (user && !hasProcessedAuthRef.current && loginAttemptedRef.current) {
       const timer = setTimeout(() => {
         handleAuthSuccess(user.uid);
       }, 0);
-      
       return () => clearTimeout(timer);
     }
   }, [user, handleAuthSuccess]);
@@ -213,10 +212,8 @@ export default function AuthStep({
    */
   const handleGoogleLoginClick = async () => {
     if (isLoading) return;
-    
-    // Resetear el ref para permitir un nuevo intento
     hasProcessedAuthRef.current = false;
-    
+    loginAttemptedRef.current = true;
     try {
       setIsLoading(true);
       setLocalError(null);
@@ -231,11 +228,9 @@ export default function AuthStep({
    */
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (isLoading) return;
-    
-    // Resetear el ref para permitir un nuevo intento
     hasProcessedAuthRef.current = false;
+    loginAttemptedRef.current = true;
 
     if (!email || !password) {
       setLocalError('Por favor, completa todos los campos');
@@ -245,7 +240,6 @@ export default function AuthStep({
     try {
       setIsLoading(true);
       setLocalError(null);
-
       await login(email, password);
     } catch {
       setIsLoading(false);
