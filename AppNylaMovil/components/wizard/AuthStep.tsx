@@ -63,7 +63,7 @@ export default function AuthStep({
     try {
       hasProcessedAuthRef.current = true;
 
-      // Crear sesión en localStorage para compatibilidad con dashboard
+      // Crear sesión en localStorage
       LocalStorageManager.saveSession({
         userId: userId,
         token: userId,
@@ -71,7 +71,28 @@ export default function AuthStep({
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       });
 
-      // Verificar si el perfil existe en Firestore
+      // 1. Revisar localStorage PRIMERO (instantáneo, sin red)
+      const localProfile = LocalStorageManager.getProfile(userId);
+      const localRole = localStorage.getItem('planiverse_role');
+
+      if (localProfile && localProfile.role && localProfile.fullName) {
+        const theme: Theme = ThemeManager.getThemeForRole(localProfile.role as UserRole);
+        ThemeManager.applyTheme(theme);
+        const root = document.documentElement;
+        root.style.setProperty('--color-primary', theme.colors.primary);
+        root.style.setProperty('--color-primary-hover', theme.colors.primaryHover || theme.colors.primary);
+        root.style.setProperty('--color-primary-active', theme.colors.primaryActive || theme.colors.primary);
+        root.style.setProperty('--color-secondary', theme.colors.secondary);
+        root.style.setProperty('--color-accent', theme.colors.accent);
+        root.style.setProperty('--color-background', theme.colors.background);
+        root.style.setProperty('--color-text', theme.colors.text);
+        root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
+        root.setAttribute('data-theme', localProfile.role);
+        router.push('/dashboard');
+        return;
+      }
+
+      // 2. Solo si no hay datos locales, consultar Firestore
       let profileData: ProfileData | null = null;
       try {
         profileData = await FirestoreService.read<ProfileData>('profile', 'data', userId);
@@ -79,16 +100,11 @@ export default function AuthStep({
         console.log('No se encontró perfil en Firestore, usuario nuevo');
       }
 
-      // Si hay perfil en Firestore, guardarlo en localStorage y redirigir al dashboard
       if (profileData && profileData.role && profileData.fullName) {
-        console.log('✅ Perfil completo encontrado en Firestore:', profileData);
-        
-        // Obtener el rol y tema
         const userRole = profileData.role as UserRole;
         const themeRole = (profileData.theme || userRole) as UserRole;
         const theme: Theme = ThemeManager.getThemeForRole(themeRole);
-        
-        // Guardar perfil en localStorage
+
         LocalStorageManager.saveProfile({
           userId: userId,
           fullName: profileData.fullName,
@@ -100,12 +116,10 @@ export default function AuthStep({
           createdAt: profileData.createdAt || new Date().toISOString(),
           updatedAt: profileData.updatedAt || new Date().toISOString(),
         });
-        
-        // Guardar rol y marcar onboarding como completo
+
         localStorage.setItem('planiverse_role', profileData.role);
         localStorage.setItem('planiverse_onboarding_done', 'true');
-        
-        // Aplicar tema inmediatamente en el DOM (antes de navegar)
+
         ThemeManager.applyTheme(theme);
         const root = document.documentElement;
         root.style.setProperty('--color-primary', theme.colors.primary);
@@ -117,9 +131,7 @@ export default function AuthStep({
         root.style.setProperty('--color-text', theme.colors.text);
         root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
         root.setAttribute('data-theme', userRole);
-        
-        // Redirigir al dashboard
-        console.log('✅ Redirigiendo a dashboard');
+
         router.push('/dashboard');
         return;
       }
