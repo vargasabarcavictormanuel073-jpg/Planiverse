@@ -212,12 +212,14 @@ export default function AuthStep({
    * Maneja el click en el botón de Gmail
    */
   const handleGoogleLoginClick = async () => {
-    if (hasProcessedAuthRef.current || isLoading) return;
+    if (isLoading) return;
+    
+    // Resetear el ref para permitir un nuevo intento
+    hasProcessedAuthRef.current = false;
     
     try {
       setIsLoading(true);
       setLocalError(null);
-      
       await loginWithGoogle();
     } catch {
       setIsLoading(false);
@@ -230,8 +232,11 @@ export default function AuthStep({
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (hasProcessedAuthRef.current || isLoading) return;
+    if (isLoading) return;
     
+    // Resetear el ref para permitir un nuevo intento
+    hasProcessedAuthRef.current = false;
+
     if (!email || !password) {
       setLocalError('Por favor, completa todos los campos');
       return;
