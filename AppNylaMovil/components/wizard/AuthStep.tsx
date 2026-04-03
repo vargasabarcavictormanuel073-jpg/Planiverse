@@ -73,7 +73,6 @@ export default function AuthStep({
 
       // 1. Revisar localStorage PRIMERO (instantáneo, sin red)
       const localProfile = LocalStorageManager.getProfile(userId);
-      const localRole = localStorage.getItem('planiverse_role');
 
       if (localProfile && localProfile.role && localProfile.fullName) {
         const theme: Theme = ThemeManager.getThemeForRole(localProfile.role as UserRole);
@@ -92,11 +91,22 @@ export default function AuthStep({
         return;
       }
 
-      // 2. Solo si no hay datos locales, consultar Firestore
+      // 2. Sin datos locales — consultar Firestore con timeout de 8 segundos
       let profileData: ProfileData | null = null;
       try {
-        profileData = await FirestoreService.read<ProfileData>('profile', 'data', userId);
-      } catch {
+        const firestorePromise = FirestoreService.read<ProfileData>('profile', 'data', userId);
+        const timeoutPromise = new Promise<null>((_, reject) =>
+          setTimeout(() => reject(new Error('timeout')), 8000)
+        );
+        profileData = await Promise.race([firestorePromise, timeoutPromise]) as ProfileData | null;
+      } catch (err) {
+        const e = err as Error;
+        if (e.message === 'timeout') {
+          setLocalError('La conexión tardó demasiado. Verifica tu internet e intenta de nuevo.');
+          hasProcessedAuthRef.current = false;
+          setIsLoading(false);
+          return;
+        }
         console.log('No se encontró perfil en Firestore, usuario nuevo');
       }
 
@@ -449,7 +459,7 @@ export default function AuthStep({
               disabled={isLoading}
               className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
-              {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+              {isLoading ? '⏳ Verificando...' : 'Iniciar sesión'}
             </button>
 
             {/* Link recuperar contraseña */}
