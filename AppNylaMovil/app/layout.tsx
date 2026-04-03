@@ -94,7 +94,18 @@ export default function RootLayout({
                   }
 
                   // Cargar tema de color basado en rol
-                  const role = localStorage.getItem('planiverse_role');
+                  // El rol puede estar en 'planiverse_role' o dentro de 'planiverse_profiles'
+                  let role = localStorage.getItem('planiverse_role');
+                  if (!role) {
+                    try {
+                      const session = JSON.parse(localStorage.getItem('planiverse_session') || 'null');
+                      if (session && session.userId) {
+                        const profiles = JSON.parse(localStorage.getItem('planiverse_profiles') || '{}');
+                        const profile = profiles[session.userId];
+                        if (profile && profile.role) role = profile.role;
+                      }
+                    } catch(e) {}
+                  }
                   if (role) {
                     const themes = {
                       student: {
