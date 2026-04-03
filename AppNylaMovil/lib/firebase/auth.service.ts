@@ -131,8 +131,7 @@ export const AuthService = {
   async resetPassword(email: string): Promise<{ success: boolean; error?: string }> {
     try {
       await sendPasswordResetEmail(auth, email, {
-        url: 'https://planiverse.vercel.app/reset-password',
-        handleCodeInApp: true,
+        url: 'https://planiverse.vercel.app/',
       });
       return { success: true };
     } catch (error) {
