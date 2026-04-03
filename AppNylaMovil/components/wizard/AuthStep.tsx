@@ -105,8 +105,18 @@ export default function AuthStep({
         localStorage.setItem('planiverse_role', profileData.role);
         localStorage.setItem('planiverse_onboarding_done', 'true');
         
-        // Aplicar tema
+        // Aplicar tema inmediatamente en el DOM (antes de navegar)
         ThemeManager.applyTheme(theme);
+        const root = document.documentElement;
+        root.style.setProperty('--color-primary', theme.colors.primary);
+        root.style.setProperty('--color-primary-hover', theme.colors.primaryHover || theme.colors.primary);
+        root.style.setProperty('--color-primary-active', theme.colors.primaryActive || theme.colors.primary);
+        root.style.setProperty('--color-secondary', theme.colors.secondary);
+        root.style.setProperty('--color-accent', theme.colors.accent);
+        root.style.setProperty('--color-background', theme.colors.background);
+        root.style.setProperty('--color-text', theme.colors.text);
+        root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
+        root.setAttribute('data-theme', userRole);
         
         // Redirigir al dashboard
         console.log('✅ Redirigiendo a dashboard');
@@ -286,6 +296,9 @@ export default function AuthStep({
                 <p className="text-sm text-green-800">{resetMessage}</p>
               </div>
             )}
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-md mb-2">
+              <p className="text-xs text-blue-700">💡 Si iniciaste sesión con Google, no necesitas contraseña. El restablecimiento solo aplica para cuentas con correo y contraseña.</p>
+            </div>
             <div>
               <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700 mb-1">
                 Correo electrónico
