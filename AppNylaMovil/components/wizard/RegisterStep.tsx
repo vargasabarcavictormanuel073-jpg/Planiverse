@@ -15,6 +15,7 @@ import { useFirebaseAuth } from '@/hooks/firebase/useFirebaseAuth';
 import { useFormValidation } from '@/hooks/auth/useFormValidation';
 import { ValidationService } from '@/lib/auth/services/ValidationService';
 import { AuthError } from '@/lib/auth/types';
+import PasswordInput from '@/components/PasswordInput';
 
 interface RegisterStepProps {
   onRegisterSuccess: (userId: string) => void;
@@ -201,8 +202,7 @@ export default function RegisterStep({
             <label className="block text-sm font-bold text-gray-700 mb-2">
               🔒 Contraseña
             </label>
-            <input
-              type="password"
+            <PasswordInput
               name="password"
               value={values.password}
               onChange={(e) => handleChange('password', e.target.value)}
@@ -225,8 +225,7 @@ export default function RegisterStep({
             <label className="block text-sm font-bold text-gray-700 mb-2">
               🔒 Confirmar Contraseña
             </label>
-            <input
-              type="password"
+            <PasswordInput
               name="confirmPassword"
               value={values.confirmPassword}
               onChange={(e) => handleChange('confirmPassword', e.target.value)}

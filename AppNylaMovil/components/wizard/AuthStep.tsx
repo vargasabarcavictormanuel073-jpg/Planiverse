@@ -21,6 +21,7 @@ import { LocalStorageManager } from '@/lib/auth/services/LocalStorageManager';
 import { FirestoreService } from '@/lib/firebase/firestore.service';
 import { ThemeManager } from '@/lib/auth/services/ThemeManager';
 import { AuthService } from '@/lib/firebase/auth.service';
+import PasswordInput from '@/components/PasswordInput';
 
 interface AuthStepProps {
   onAuthSuccess: (userId: string, isNewUser: boolean) => void;
@@ -441,9 +442,8 @@ export default function AuthStep({
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Contraseña
               </label>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}

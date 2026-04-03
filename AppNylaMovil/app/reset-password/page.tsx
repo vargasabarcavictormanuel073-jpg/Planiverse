@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { confirmPasswordReset, verifyPasswordResetCode, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
+import PasswordInput from '@/components/PasswordInput';
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -119,8 +120,7 @@ function ResetPasswordForm() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nueva contraseña</label>
-                <input
-                  type="password"
+                <PasswordInput
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Mínimo 6 caracteres"
@@ -130,8 +130,7 @@ function ResetPasswordForm() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Confirmar contraseña</label>
-                <input
-                  type="password"
+                <PasswordInput
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   placeholder="Repite tu contraseña"
