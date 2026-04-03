@@ -20,6 +20,7 @@ import { MigrationService } from '@/lib/firebase/migration.service';
 import { LocalStorageManager } from '@/lib/auth/services/LocalStorageManager';
 import { FirestoreService } from '@/lib/firebase/firestore.service';
 import { ThemeManager } from '@/lib/auth/services/ThemeManager';
+import { AuthService } from '@/lib/firebase/auth.service';
 
 interface AuthStepProps {
   onAuthSuccess: (userId: string, isNewUser: boolean) => void;
@@ -50,6 +51,9 @@ export default function AuthStep({
   const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showResetForm, setShowResetForm] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetMessage, setResetMessage] = useState<string | null>(null);
   const hasProcessedAuthRef = useRef(false);
 
   /**
@@ -227,6 +231,26 @@ export default function AuthStep({
     onNavigateToRegister();
   };
 
+  /**
+   * Maneja el envío del formulario de recuperación de contraseña
+   */
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      setLocalError('Ingresa tu correo electrónico');
+      return;
+    }
+    setIsLoading(true);
+    setLocalError(null);
+    const result = await AuthService.resetPassword(resetEmail);
+    setIsLoading(false);
+    if (result.success) {
+      setResetMessage('✅ Correo enviado. Revisa tu bandeja de entrada (y spam).');
+    } else {
+      setLocalError(result.error || 'Error al enviar el correo');
+    }
+  };
+
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
@@ -251,7 +275,49 @@ export default function AuthStep({
           </div>
         )}
 
-        {!showEmailForm ? (
+        {showResetForm ? (
+          /* Formulario de recuperación de contraseña */
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div className="text-center mb-2">
+              <p className="text-sm text-gray-600">Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.</p>
+            </div>
+            {resetMessage && (
+              <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                <p className="text-sm text-green-800">{resetMessage}</p>
+              </div>
+            )}
+            <div>
+              <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700 mb-1">
+                Correo electrónico
+              </label>
+              <input
+                id="reset-email"
+                type="email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                disabled={isLoading}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                placeholder="tu@email.com"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isLoading || !!resetMessage}
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            >
+              {isLoading ? 'Enviando...' : 'Enviar correo de recuperación'}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowResetForm(false); setResetMessage(null); setLocalError(null); }}
+              disabled={isLoading}
+              className="w-full px-4 py-2 text-gray-700 hover:text-gray-900 focus:outline-none focus:underline disabled:opacity-50"
+            >
+              ← Volver
+            </button>
+          </form>
+        ) : !showEmailForm ? (
           /* Vista inicial con botones de autenticación */
           <div className="space-y-4">
             {/* Botón de Gmail */}
@@ -360,6 +426,18 @@ export default function AuthStep({
             >
               {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </button>
+
+            {/* Link recuperar contraseña */}
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => { setShowResetForm(true); setShowEmailForm(false); setLocalError(null); }}
+                disabled={isLoading}
+                className="text-sm text-blue-600 hover:underline disabled:opacity-50"
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
 
             <button
               type="button"

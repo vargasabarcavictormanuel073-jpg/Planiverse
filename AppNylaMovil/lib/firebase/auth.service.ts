@@ -19,6 +19,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
+  sendPasswordResetEmail,
   User,
   onAuthStateChanged as firebaseOnAuthStateChanged,
   Unsubscribe
@@ -120,6 +121,22 @@ export const AuthService = {
           code: err.code || 'unknown',
           message: this.getErrorMessage(err.code || 'unknown')
         }
+      };
+    }
+  },
+
+  /**
+   * Enviar correo de recuperación de contraseña
+   */
+  async resetPassword(email: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return { success: true };
+    } catch (error) {
+      const err = error as { code?: string };
+      return {
+        success: false,
+        error: this.getErrorMessage(err.code || 'unknown')
       };
     }
   },
