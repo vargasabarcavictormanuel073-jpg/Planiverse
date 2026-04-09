@@ -21,6 +21,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AppLayout from '@/components/layout/AppLayout';
+import CacheStats from '@/components/CacheStats';
 import { useFirebaseAuth } from '@/hooks/firebase/useFirebaseAuth';
 import { FirestoreService } from '@/lib/firebase/firestore.service';
 
@@ -180,7 +181,7 @@ interface ProfileData {
         </div>
 
         {/* Información detallada */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
           <h3 className="text-xl font-bold text-gray-900 mb-6">Información Personal</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -207,6 +208,9 @@ interface ProfileData {
             </div>
           </div>
         </div>
+
+        {/* Estadísticas del caché */}
+        <CacheStats />
       </div>
     </AppLayout>
   );
