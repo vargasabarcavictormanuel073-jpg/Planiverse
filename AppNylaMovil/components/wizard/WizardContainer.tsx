@@ -55,33 +55,19 @@ export default function WizardContainer({ initialStep = 1 }: WizardContainerProp
       try {
         setIsLoading(true);
         
-        // ✅ MODIFICADO: Solo limpiar sesión si NO hay onboarding completo
-        if (initialStep === 1) {
-          const onboardingDone = localStorage.getItem('planiverse_onboarding_done') === 'true';
-          const profileData = localStorage.getItem('planiverse_profile');
-          const roleData = localStorage.getItem('planiverse_role');
-          
-          // Si el onboarding NO está completo, limpiar sesión
-          if (!onboardingDone || !profileData || !roleData) {
-            LocalStorageManager.clearSession();
-          }
-          setIsLoading(false);
-          setSessionChecked(true);
-          return;
-        }
-        
         // Verificar si existe una sesión activa
         const session = LocalStorageManager.getSession();
         
         if (session) {
-          // Validar que la sesión no esté expirada (verificar fecha de expiración)
+          // Validar que la sesión no esté expirada
           const isValid = new Date(session.expiresAt) > new Date();
           
           if (isValid) {
             // Sesión válida - verificar si el perfil está completo
             const profile = LocalStorageManager.getProfile(session.userId);
+            const onboardingDone = localStorage.getItem('planiverse_onboarding_done') === 'true';
             
-            if (profile && profile.role && profile.fullName) {
+            if (profile && profile.role && profile.fullName && onboardingDone) {
               // Perfil completo - aplicar tema y redirigir al dashboard
               ThemeManager.applyTheme(profile.theme);
               router.push('/dashboard');
@@ -96,14 +82,8 @@ export default function WizardContainer({ initialStep = 1 }: WizardContainerProp
                 setCurrentStep(savedProgress.currentStep);
                 setCompletedSteps(new Set(savedProgress.completedSteps));
               } else {
-                // Si no hay progreso, determinar paso según datos del perfil
-                if (profile) {
-                  if (!profile.fullName) {
-                    setCurrentStep(3); // Ir a datos de usuario
-                  } else if (!profile.role) {
-                    setCurrentStep(4); // Ir a selección de rol
-                  }
-                }
+                // Si no hay progreso, ir al paso 3 (datos de usuario)
+                setCurrentStep(3);
               }
             }
           } else {
