@@ -285,6 +285,16 @@ export default function AuthStep({
 
   return (
     <div className="w-full max-w-md mx-auto">
+      {/* Link de ayuda flotante */}
+      <div className="mb-4 text-center">
+        <a
+          href="/help"
+          className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 hover:underline focus:outline-none focus:underline"
+        >
+          <span>❓</span> ¿Necesitas ayuda?
+        </a>
+      </div>
+
       <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
         {/* Encabezado */}
         <div className="text-center mb-6">
