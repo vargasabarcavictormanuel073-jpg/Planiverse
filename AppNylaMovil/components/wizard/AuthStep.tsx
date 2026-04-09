@@ -64,6 +64,7 @@ export default function AuthStep({
   const handleAuthSuccess = useCallback(async (userId: string) => {
     try {
       hasProcessedAuthRef.current = true;
+      setIsLoading(true);
 
       // Crear sesión en localStorage
       LocalStorageManager.saveSession({
@@ -93,80 +94,11 @@ export default function AuthStep({
         return;
       }
 
-      // 2. Sin datos locales — consultar Firestore con timeout de 5 segundos
-      let profileData: ProfileData | null = null;
-      try {
-        const firestorePromise = FirestoreService.read<ProfileData>('profile', 'data', userId);
-        const timeoutPromise = new Promise<null>((_, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 5000)
-        );
-        profileData = await Promise.race([firestorePromise, timeoutPromise]) as ProfileData | null;
-      } catch (err) {
-        const e = err as Error;
-        if (e.message === 'timeout') {
-          // No mostrar error, solo continuar con wizard (usuario nuevo)
-          console.log('Timeout en Firestore, continuando como usuario nuevo');
-          profileData = null;
-        } else {
-          console.log('No se encontró perfil en Firestore, usuario nuevo');
-        }
-      }
-
-      if (profileData && profileData.role && profileData.fullName) {
-        const userRole = profileData.role as UserRole;
-        const themeRole = (profileData.theme || userRole) as UserRole;
-        const theme: Theme = ThemeManager.getThemeForRole(themeRole);
-
-        LocalStorageManager.saveProfile({
-          userId: userId,
-          fullName: profileData.fullName,
-          nickname: profileData.nickname || '',
-          age: profileData.age || 0,
-          role: userRole,
-          theme: theme,
-          selectedModules: profileData.selectedModules || [],
-          createdAt: profileData.createdAt || new Date().toISOString(),
-          updatedAt: profileData.updatedAt || new Date().toISOString(),
-        });
-
-        localStorage.setItem('planiverse_role', profileData.role);
-        localStorage.setItem('planiverse_onboarding_done', 'true');
-
-        ThemeManager.applyTheme(theme);
-        const root = document.documentElement;
-        root.style.setProperty('--color-primary', theme.colors.primary);
-        root.style.setProperty('--color-primary-hover', theme.colors.primaryHover || theme.colors.primary);
-        root.style.setProperty('--color-primary-active', theme.colors.primaryActive || theme.colors.primary);
-        root.style.setProperty('--color-secondary', theme.colors.secondary);
-        root.style.setProperty('--color-accent', theme.colors.accent);
-        root.style.setProperty('--color-background', theme.colors.background);
-        root.style.setProperty('--color-text', theme.colors.text);
-        root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
-        root.setAttribute('data-theme', userRole);
-
-        router.push('/dashboard');
-        return;
-      }
-
-      // Verificar si hay datos en localStorage para migrar
-      const hasLocalData = MigrationService.hasLocalStorageData(userId);
-      
-      if (hasLocalData) {
-        console.log('🔄 Detectados datos en localStorage, iniciando migración...');
-        const migrationResult = await MigrationService.migrateUserData(userId);
-        
-        if (migrationResult.success) {
-          console.log('✅ Migración completada exitosamente');
-        } else {
-          console.warn('⚠️ Migración parcial:', migrationResult.errors);
-        }
-      }
-
-      // Usuario nuevo o perfil incompleto - continuar con el wizard
-      const isNewUser = !profileData;
-      
-      console.log('🔄 Usuario nuevo o perfil incompleto, continuando wizard:', { userId, isNewUser });
-      onAuthSuccess(userId, isNewUser);
+      // 2. Sin datos locales — usuario nuevo, ir al wizard
+      // NO intentar leer de Firestore aquí (causa delays)
+      console.log('Usuario nuevo, continuando con wizard');
+      onAuthSuccess(userId, true);
+      setIsLoading(false);
     } catch (error) {
       console.error('❌ Error en handleAuthSuccess:', error);
       setLocalError('Error al procesar autenticación');
