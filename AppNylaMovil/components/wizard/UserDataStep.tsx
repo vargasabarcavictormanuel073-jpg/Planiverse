@@ -150,10 +150,10 @@ export default function UserDataStep({
         fullName: userData.fullName,
         nickname: userData.nickname,
         age: userData.age,
-        role: 'student',
+        role: 'student', // Temporal, se actualizará en el siguiente paso
         selectedModules: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       try {

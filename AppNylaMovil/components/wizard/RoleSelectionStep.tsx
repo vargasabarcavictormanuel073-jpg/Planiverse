@@ -149,7 +149,8 @@ interface ProfileData {
       const updatedProfile = {
         ...existingProfile,
         role: selectedRole,
-        theme: theme,
+        theme: selectedRole, // Guardar el nombre del rol, no el objeto theme
+        updatedAt: new Date().toISOString(),
       };
 
       // Guardar perfil actualizado en Firestore
