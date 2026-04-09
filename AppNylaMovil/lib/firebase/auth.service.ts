@@ -16,14 +16,13 @@
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword,
-  signInWithRedirect,
+  signInWithPopup,
   GoogleAuthProvider,
   signOut,
   sendPasswordResetEmail,
   User,
   onAuthStateChanged as firebaseOnAuthStateChanged,
-  Unsubscribe,
-  getRedirectResult
+  Unsubscribe
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from './config';
@@ -90,56 +89,42 @@ export const AuthService = {
   },
 
   /**
-   * Obtener resultado de redirect (si existe)
-   */
-  async getRedirectResult(): Promise<AuthResult> {
-    try {
-      const result = await getRedirectResult(auth);
-      if (result && result.user) {
-        const user = result.user;
-        
-        // Verificar si el perfil ya existe
-        const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
-        const profileSnap = await getDoc(profileRef);
-        
-        // Si no existe, crear perfil inicial
-        if (!profileSnap.exists()) {
-          await setDoc(profileRef, {
-            userId: user.uid,
-            email: user.email,
-            authMethod: 'google',
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          });
-        }
-        
-        return { success: true, user };
-      }
-      return { success: false };
-    } catch (error) {
-      const err = error as { code?: string };
-      return {
-        success: false,
-        error: {
-          code: err.code || 'unknown',
-          message: this.getErrorMessage(err.code || 'unknown')
-        }
-      };
-    }
-  },
-
-  /**
-   * Login con Google OAuth (usando redirect en lugar de popup)
+   * Login con Google OAuth (usando popup)
    */
   async loginWithGoogle(): Promise<AuthResult> {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithRedirect(auth, provider);
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
       
-      // Nota: La página se redirigirá y volverá aquí después de autenticarse
-      return { success: true };
+      const userCredential = await signInWithPopup(auth, provider);
+      const user = userCredential.user;
+      
+      // Verificar si el perfil ya existe
+      const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
+      const profileSnap = await getDoc(profileRef);
+      
+      // Si no existe, crear perfil inicial
+      if (!profileSnap.exists()) {
+        await setDoc(profileRef, {
+          userId: user.uid,
+          email: user.email,
+          authMethod: 'google',
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+      
+      return { success: true, user };
     } catch (error) {
       const err = error as { code?: string };
+      
+      // Si el usuario cierra el popup, no mostrar error
+      if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+        return { success: false };
+      }
+      
       return {
         success: false,
         error: {
