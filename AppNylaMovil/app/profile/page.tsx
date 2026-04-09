@@ -233,11 +233,11 @@ export default function ProfilePage() {
         <CacheStats />
 
         {/* Sección de peligro - Eliminar cuenta */}
-        <div className="bg-red-50 dark:bg-red-900/20 rounded-lg shadow-sm border-2 border-red-300 dark:border-red-800 p-8 mt-6">
-          <h3 className="text-xl font-bold text-red-700 dark:text-red-100 mb-2 flex items-center gap-2">
+        <div className="bg-red-100 dark:bg-red-900/20 rounded-lg shadow-sm border-2 border-red-400 dark:border-red-800 p-8 mt-6">
+          <h3 className="text-xl font-bold text-red-900 dark:text-red-100 mb-2 flex items-center gap-2">
             <span>⚠️</span> Zona de Peligro
           </h3>
-          <p className="text-red-700 dark:text-red-200 mb-4 font-semibold">
+          <p className="text-red-900 dark:text-red-200 mb-4 font-bold">
             Esta acción es irreversible. Se eliminarán todos tus datos permanentemente.
           </p>
           
