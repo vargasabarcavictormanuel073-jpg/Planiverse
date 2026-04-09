@@ -22,14 +22,12 @@
 
 import { useState, useEffect } from 'react';
 import { FirestoreService } from '@/lib/firebase/firestore.service';
-import { CacheService } from '@/lib/services/CacheService';
 import { useFirebaseAuth } from './useFirebaseAuth';
 
 interface UseFirestore<T> {
   data: T[];
   loading: boolean;
   error: Error | null;
-  isFromCache: boolean;
   addItem: (item: Omit<T, 'id'>) => Promise<void>;
   updateItem: (id: string, updates: Partial<T>) => Promise<void>;
   deleteItem: (id: string) => Promise<void>;
@@ -41,9 +39,6 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-  const [isFromCache, setIsFromCache] = useState<boolean>(false);
-
-  const cacheKey = `${collectionName}_${user?.uid || 'public'}`;
 
   // Suscribirse a cambios en tiempo real
   useEffect(() => {
@@ -53,27 +48,15 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
       return;
     }
 
-    // 1. Intentar cargar del caché primero
-    CacheService.get<T[]>(cacheKey).then((cached) => {
-      if (cached) {
-        setData(cached);
-        setIsFromCache(true);
-        setLoading(false);
-      }
-    });
-
+    setLoading(true);
     setError(null);
 
-    // 2. Suscribirse a cambios en tiempo real (sincronización en background)
     const unsubscribe = FirestoreService.subscribe<T>(
       collectionName,
       user.uid,
       (newData) => {
         setData(newData);
-        setIsFromCache(false);
         setLoading(false);
-        // Guardar en caché
-        CacheService.set(cacheKey, newData);
       },
       (err) => {
         setError(err);
@@ -83,7 +66,7 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
 
     // Cleanup: desuscribirse cuando el componente se desmonte o cambie el usuario
     return () => unsubscribe();
-  }, [collectionName, user, cacheKey]);
+  }, [collectionName, user]);
 
   /**
    * Agregar nuevo item
@@ -97,8 +80,6 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
     try {
       setError(null);
       await FirestoreService.create(collectionName, item, user.uid);
-      // Limpiar caché para forzar actualización
-      await CacheService.remove(cacheKey);
       // La suscripción actualizará automáticamente el estado
     } catch (err) {
       const error = err as Error;
@@ -119,8 +100,6 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
     try {
       setError(null);
       await FirestoreService.update(collectionName, id, updates, user.uid);
-      // Limpiar caché para forzar actualización
-      await CacheService.remove(cacheKey);
       // La suscripción actualizará automáticamente el estado
     } catch (err) {
       const error = err as Error;
@@ -141,8 +120,6 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
     try {
       setError(null);
       await FirestoreService.delete(collectionName, id, user.uid);
-      // Limpiar caché para forzar actualización
-      await CacheService.remove(cacheKey);
       // La suscripción actualizará automáticamente el estado
     } catch (err) {
       const error = err as Error;
@@ -165,9 +142,6 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
       setError(null);
       const newData = await FirestoreService.readAll<T>(collectionName, user.uid);
       setData(newData);
-      setIsFromCache(false);
-      // Actualizar caché
-      await CacheService.set(cacheKey, newData);
     } catch (err) {
       setError(err as Error);
     } finally {
@@ -179,7 +153,6 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
     data,
     loading,
     error,
-    isFromCache,
     addItem,
     updateItem,
     deleteItem,
