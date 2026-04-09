@@ -120,27 +120,10 @@ export default function HelpPage() {
             ¿No encontraste solución? Nuestro equipo está listo para ayudarte.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* WhatsApp */}
-            <a
-              href="https://wa.me/521XXXXXXXXXX"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-4 p-4 rounded-xl border-2 border-green-200 dark:border-green-800 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
-            >
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
-                💬
-              </div>
-              <div>
-                <p className="font-bold text-gray-900 dark:text-gray-100">WhatsApp</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">+52 1 XXX XXX XXXX</p>
-                <p className="text-xs text-green-600 dark:text-green-400 mt-1">Respuesta en minutos</p>
-              </div>
-            </a>
-
+          <div className="grid grid-cols-1 gap-4">
             {/* Email */}
             <a
-              href="mailto:soporte@planiverse.app"
+              href="mailto:sistemsvlu@gmail.com"
               className="flex items-center gap-4 p-4 rounded-xl border-2 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
             >
               <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
@@ -148,7 +131,7 @@ export default function HelpPage() {
               </div>
               <div>
                 <p className="font-bold text-gray-900 dark:text-gray-100">Correo</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">soporte@planiverse.app</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">sistemsvlu@gmail.com</p>
                 <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Respuesta en 24 hrs</p>
               </div>
             </a>
