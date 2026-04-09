@@ -93,23 +93,23 @@ export default function AuthStep({
         return;
       }
 
-      // 2. Sin datos locales — consultar Firestore con timeout de 8 segundos
+      // 2. Sin datos locales — consultar Firestore con timeout de 5 segundos
       let profileData: ProfileData | null = null;
       try {
         const firestorePromise = FirestoreService.read<ProfileData>('profile', 'data', userId);
         const timeoutPromise = new Promise<null>((_, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 8000)
+          setTimeout(() => reject(new Error('timeout')), 5000)
         );
         profileData = await Promise.race([firestorePromise, timeoutPromise]) as ProfileData | null;
       } catch (err) {
         const e = err as Error;
         if (e.message === 'timeout') {
-          setLocalError('La conexión tardó demasiado. Verifica tu internet e intenta de nuevo.');
-          hasProcessedAuthRef.current = false;
-          setIsLoading(false);
-          return;
+          // No mostrar error, solo continuar con wizard (usuario nuevo)
+          console.log('Timeout en Firestore, continuando como usuario nuevo');
+          profileData = null;
+        } else {
+          console.log('No se encontró perfil en Firestore, usuario nuevo');
         }
-        console.log('No se encontró perfil en Firestore, usuario nuevo');
       }
 
       if (profileData && profileData.role && profileData.fullName) {

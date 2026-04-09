@@ -97,6 +97,8 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
     try {
       setError(null);
       await FirestoreService.create(collectionName, item, user.uid);
+      // Limpiar caché para forzar actualización
+      await CacheService.remove(cacheKey);
       // La suscripción actualizará automáticamente el estado
     } catch (err) {
       const error = err as Error;
@@ -117,6 +119,8 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
     try {
       setError(null);
       await FirestoreService.update(collectionName, id, updates, user.uid);
+      // Limpiar caché para forzar actualización
+      await CacheService.remove(cacheKey);
       // La suscripción actualizará automáticamente el estado
     } catch (err) {
       const error = err as Error;
@@ -137,6 +141,8 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
     try {
       setError(null);
       await FirestoreService.delete(collectionName, id, user.uid);
+      // Limpiar caché para forzar actualización
+      await CacheService.remove(cacheKey);
       // La suscripción actualizará automáticamente el estado
     } catch (err) {
       const error = err as Error;

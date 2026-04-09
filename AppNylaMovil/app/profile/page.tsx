@@ -151,6 +151,25 @@ export default function ProfilePage() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      setIsLoading(true);
+      const result = await AuthService.deleteAccount();
+      
+      if (result.success) {
+        // Redirigir a página de inicio después de eliminar
+        router.push('/');
+      } else {
+        setError(result.error || 'Error al eliminar la cuenta');
+      }
+    } catch (err) {
+      setError('Error al eliminar la cuenta');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AppLayout title="Perfil">
       <div className="max-w-3xl mx-auto">
@@ -238,22 +257,4 @@ export default function ProfilePage() {
       </div>
     </AppLayout>
   );
-
-  async function handleDeleteAccount() {
-    try {
-      setIsLoading(true);
-      const result = await AuthService.deleteAccount();
-      
-      if (result.success) {
-        // Redirigir a página de inicio después de eliminar
-        router.push('/');
-      } else {
-        setError(result.error || 'Error al eliminar la cuenta');
-      }
-    } catch (err) {
-      setError('Error al eliminar la cuenta');
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+}
