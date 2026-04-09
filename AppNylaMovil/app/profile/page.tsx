@@ -26,6 +26,13 @@ import { useFirebaseAuth } from '@/hooks/firebase/useFirebaseAuth';
 import { FirestoreService } from '@/lib/firebase/firestore.service';
 import { AuthService } from '@/lib/firebase/auth.service';
 
+interface ProfileData {
+  role?: string;
+  fullName?: string;
+  nickname?: string;
+  age?: number;
+}
+
 export default function ProfilePage() {
   const router = useRouter();
   const { user, loading: authLoading } = useFirebaseAuth();
@@ -45,13 +52,6 @@ export default function ProfilePage() {
         router.push('/');
         return;
       }
-
-interface ProfileData {
-  role?: string;
-  fullName?: string;
-  nickname?: string;
-  age?: number;
-}
 
       try {
         // Cargar perfil desde Firestore con el orden correcto: collectionName, docId, userId
