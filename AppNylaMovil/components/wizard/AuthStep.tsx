@@ -57,6 +57,30 @@ export default function AuthStep({
   const [resetMessage, setResetMessage] = useState<string | null>(null);
   const hasProcessedAuthRef = useRef(false);
   const loginAttemptedRef = useRef(false); // solo procesar user si el usuario intentó login
+  const redirectCheckRef = useRef(false); // para verificar redirect solo una vez
+
+  /**
+   * Verificar si hay un resultado de redirect de Google al cargar
+   */
+  useEffect(() => {
+    const checkRedirectResult = async () => {
+      if (redirectCheckRef.current) return;
+      redirectCheckRef.current = true;
+
+      try {
+        const result = await AuthService.getRedirectResult();
+        if (result && result.success && result.user) {
+          console.log('✅ Usuario autenticado desde redirect:', result.user.uid);
+          loginAttemptedRef.current = true;
+          // El useEffect de user lo manejará
+        }
+      } catch (error) {
+        console.error('Error verificando redirect result:', error);
+      }
+    };
+
+    checkRedirectResult();
+  }, []);
 
   /**
    * Maneja el éxito de autenticación

@@ -90,40 +90,50 @@ export const AuthService = {
   },
 
   /**
+   * Obtener resultado de redirect (si existe)
+   */
+  async getRedirectResult(): Promise<AuthResult> {
+    try {
+      const result = await getRedirectResult(auth);
+      if (result && result.user) {
+        const user = result.user;
+        
+        // Verificar si el perfil ya existe
+        const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
+        const profileSnap = await getDoc(profileRef);
+        
+        // Si no existe, crear perfil inicial
+        if (!profileSnap.exists()) {
+          await setDoc(profileRef, {
+            userId: user.uid,
+            email: user.email,
+            authMethod: 'google',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+        }
+        
+        return { success: true, user };
+      }
+      return { success: false };
+    } catch (error) {
+      const err = error as { code?: string };
+      return {
+        success: false,
+        error: {
+          code: err.code || 'unknown',
+          message: this.getErrorMessage(err.code || 'unknown')
+        }
+      };
+    }
+  },
+
+  /**
    * Login con Google OAuth (usando redirect en lugar de popup)
    */
   async loginWithGoogle(): Promise<AuthResult> {
     try {
       const provider = new GoogleAuthProvider();
-      
-      // Primero, verificar si hay un resultado de redirect pendiente
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          const user = result.user;
-          
-          // Verificar si el perfil ya existe
-          const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
-          const profileSnap = await getDoc(profileRef);
-          
-          // Si no existe, crear perfil inicial
-          if (!profileSnap.exists()) {
-            await setDoc(profileRef, {
-              userId: user.uid,
-              email: user.email,
-              authMethod: 'google',
-              createdAt: serverTimestamp(),
-              updatedAt: serverTimestamp()
-            });
-          }
-          
-          return { success: true, user };
-        }
-      } catch (err) {
-        console.warn('Error verificando redirect result:', err);
-      }
-      
-      // Si no hay resultado de redirect, iniciar el flujo de redirect
       await signInWithRedirect(auth, provider);
       
       // Nota: La página se redirigirá y volverá aquí después de autenticarse
