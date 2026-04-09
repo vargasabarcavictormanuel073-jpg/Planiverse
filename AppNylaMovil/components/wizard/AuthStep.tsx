@@ -90,12 +90,62 @@ export default function AuthStep({
         root.style.setProperty('--color-text', theme.colors.text);
         root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
         root.setAttribute('data-theme', localProfile.role);
+        localStorage.setItem('planiverse_onboarding_done', 'true');
         router.push('/dashboard');
         return;
       }
 
-      // 2. Sin datos locales — usuario nuevo, ir al wizard
-      // NO intentar leer de Firestore aquí (causa delays)
+      // 2. Sin datos locales — intentar leer de Firestore
+      console.log('No hay datos locales, intentando leer de Firestore...');
+      try {
+        const profileData = await FirestoreService.read<ProfileData>('profile', 'data', userId);
+        
+        if (profileData && profileData.role && profileData.fullName) {
+          console.log('✅ Perfil encontrado en Firestore:', profileData);
+          
+          const userRole = profileData.role as UserRole;
+          const themeRole = (profileData.theme || userRole) as UserRole;
+          const theme: Theme = ThemeManager.getThemeForRole(themeRole);
+
+          // Guardar en localStorage
+          LocalStorageManager.saveProfile({
+            userId: userId,
+            fullName: profileData.fullName,
+            nickname: profileData.nickname || '',
+            age: profileData.age || 0,
+            role: userRole,
+            theme: theme,
+            selectedModules: profileData.selectedModules || [],
+            createdAt: profileData.createdAt || new Date().toISOString(),
+            updatedAt: profileData.updatedAt || new Date().toISOString(),
+          });
+
+          localStorage.setItem('planiverse_role', profileData.role);
+          localStorage.setItem('planiverse_onboarding_done', 'true');
+
+          // Aplicar tema
+          ThemeManager.applyTheme(theme);
+          const root = document.documentElement;
+          root.style.setProperty('--color-primary', theme.colors.primary);
+          root.style.setProperty('--color-primary-hover', theme.colors.primaryHover || theme.colors.primary);
+          root.style.setProperty('--color-primary-active', theme.colors.primaryActive || theme.colors.primary);
+          root.style.setProperty('--color-secondary', theme.colors.secondary);
+          root.style.setProperty('--color-accent', theme.colors.accent);
+          root.style.setProperty('--color-background', theme.colors.background);
+          root.style.setProperty('--color-text', theme.colors.text);
+          root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
+          root.setAttribute('data-theme', userRole);
+
+          router.push('/dashboard');
+          return;
+        } else {
+          console.log('❌ No se encontró perfil completo en Firestore');
+        }
+      } catch (err) {
+        console.error('Error leyendo de Firestore:', err);
+      }
+
+      // 3. Usuario nuevo o perfil incompleto, ir al wizard
       console.log('Usuario nuevo, continuando con wizard');
       onAuthSuccess(userId, true);
       setIsLoading(false);
