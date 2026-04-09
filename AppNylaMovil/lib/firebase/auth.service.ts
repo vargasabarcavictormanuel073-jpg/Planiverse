@@ -16,13 +16,14 @@
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
   GoogleAuthProvider,
   signOut,
   sendPasswordResetEmail,
   User,
   onAuthStateChanged as firebaseOnAuthStateChanged,
-  Unsubscribe
+  Unsubscribe,
+  getRedirectResult
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from './config';
@@ -89,30 +90,44 @@ export const AuthService = {
   },
 
   /**
-   * Login con Google OAuth
+   * Login con Google OAuth (usando redirect en lugar de popup)
    */
   async loginWithGoogle(): Promise<AuthResult> {
     try {
       const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-      const user = userCredential.user;
       
-      // Verificar si el perfil ya existe
-      const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
-      const profileSnap = await getDoc(profileRef);
-      
-      // Si no existe, crear perfil inicial
-      if (!profileSnap.exists()) {
-        await setDoc(profileRef, {
-          userId: user.uid,
-          email: user.email,
-          authMethod: 'google',
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        });
+      // Primero, verificar si hay un resultado de redirect pendiente
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          const user = result.user;
+          
+          // Verificar si el perfil ya existe
+          const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
+          const profileSnap = await getDoc(profileRef);
+          
+          // Si no existe, crear perfil inicial
+          if (!profileSnap.exists()) {
+            await setDoc(profileRef, {
+              userId: user.uid,
+              email: user.email,
+              authMethod: 'google',
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+          }
+          
+          return { success: true, user };
+        }
+      } catch (err) {
+        console.warn('Error verificando redirect result:', err);
       }
       
-      return { success: true, user };
+      // Si no hay resultado de redirect, iniciar el flujo de redirect
+      await signInWithRedirect(auth, provider);
+      
+      // Nota: La página se redirigirá y volverá aquí después de autenticarse
+      return { success: true };
     } catch (error) {
       const err = error as { code?: string };
       return {
