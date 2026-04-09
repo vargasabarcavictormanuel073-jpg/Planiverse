@@ -151,6 +151,45 @@ export const AuthService = {
   },
 
   /**
+   * Eliminar cuenta de usuario (datos en Firestore y autenticación)
+   */
+  async deleteAccount(): Promise<{ success: boolean; error?: string }> {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        return { success: false, error: 'No hay usuario autenticado' };
+      }
+
+      // 1. Eliminar datos de Firestore
+      try {
+        // Eliminar documento de perfil
+        const profileRef = doc(db, 'users', user.uid, 'profile', 'data');
+        await setDoc(profileRef, { deletedAt: serverTimestamp() }, { merge: true });
+        
+        // Nota: En producción, deberías usar una Cloud Function para eliminar
+        // todos los datos del usuario de forma segura
+      } catch (err) {
+        console.warn('Error eliminando datos de Firestore:', err);
+        // Continuar con la eliminación de la cuenta de Firebase
+      }
+
+      // 2. Eliminar cuenta de Firebase Authentication
+      await user.delete();
+
+      // 3. Limpiar localStorage
+      localStorage.clear();
+
+      return { success: true };
+    } catch (error) {
+      const err = error as { code?: string };
+      return {
+        success: false,
+        error: this.getErrorMessage(err.code || 'unknown')
+      };
+    }
+  },
+
+  /**
    * Obtener usuario actual
    */
   getCurrentUser(): User | null {

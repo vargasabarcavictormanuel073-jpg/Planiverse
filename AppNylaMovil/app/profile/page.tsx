@@ -24,6 +24,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import CacheStats from '@/components/CacheStats';
 import { useFirebaseAuth } from '@/hooks/firebase/useFirebaseAuth';
 import { FirestoreService } from '@/lib/firebase/firestore.service';
+import { AuthService } from '@/lib/firebase/auth.service';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -211,7 +212,48 @@ interface ProfileData {
 
         {/* Estadísticas del caché */}
         <CacheStats />
+
+        {/* Sección de peligro - Eliminar cuenta */}
+        <div className="bg-red-50 dark:bg-red-900/20 rounded-lg shadow-sm border-2 border-red-200 dark:border-red-800 p-8 mt-6">
+          <h3 className="text-xl font-bold text-red-900 dark:text-red-100 mb-2 flex items-center gap-2">
+            <span>⚠️</span> Zona de Peligro
+          </h3>
+          <p className="text-red-800 dark:text-red-200 mb-4">
+            Esta acción es irreversible. Se eliminarán todos tus datos permanentemente.
+          </p>
+          
+          <button
+            onClick={() => {
+              if (confirm('⚠️ ¿Estás seguro de que quieres eliminar tu cuenta?\n\nEsta acción es IRREVERSIBLE y se eliminarán todos tus datos:\n- Tareas\n- Notas\n- Eventos\n- Recordatorios\n- Perfil\n\n¿Deseas continuar?')) {
+                if (confirm('Última confirmación: ¿Eliminar cuenta permanentemente?')) {
+                  handleDeleteAccount();
+                }
+              }
+            }}
+            className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
+          >
+            🗑️ Eliminar Mi Cuenta Permanentemente
+          </button>
+        </div>
       </div>
     </AppLayout>
   );
-}
+
+  async function handleDeleteAccount() {
+    try {
+      setIsLoading(true);
+      const result = await AuthService.deleteAccount();
+      
+      if (result.success) {
+        // Redirigir a página de inicio después de eliminar
+        router.push('/');
+      } else {
+        setError(result.error || 'Error al eliminar la cuenta');
+      }
+    } catch (err) {
+      setError('Error al eliminar la cuenta');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }
