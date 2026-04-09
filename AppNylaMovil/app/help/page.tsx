@@ -1,6 +1,6 @@
 'use client';
 
-import AppLayout from '@/components/layout/AppLayout';
+import { useRouter } from 'next/navigation';
 
 const ERRORES_COMUNES = [
   {
@@ -56,8 +56,25 @@ const ERRORES_COMUNES = [
 ];
 
 export default function HelpPage() {
+  const router = useRouter();
+
   return (
-    <AppLayout title="Ayuda">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Topbar simple sin autenticación */}
+      <div className="sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+          >
+            ← Volver
+          </button>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Ayuda</h1>
+          <div className="w-20" />
+        </div>
+      </div>
+
+      <main className="pt-8 px-4 md:px-8 py-8 max-w-7xl mx-auto">
       <div className="max-w-3xl mx-auto space-y-8">
 
         {/* Encabezado */}
@@ -150,6 +167,7 @@ export default function HelpPage() {
           Planiverse v1.0.0 · Hecho con ❤️ para estudiantes y maestros
         </p>
       </div>
-    </AppLayout>
+      </main>
+    </div>
   );
 }
