@@ -265,3 +265,53 @@ html.dark body textarea::placeholder {
   -webkit-text-fill-color: #64748b !important;
   opacity: 1 !important;
 }
+
+/* Ajustes para móviles - Reducir tamaños */
+@media (max-width: 768px) {
+  /* Reducir tamaño base de fuente */
+  html {
+    font-size: 14px;
+  }
+  
+  /* Ajustar padding y márgenes */
+  body {
+    font-size: 0.875rem;
+  }
+  
+  /* Títulos más pequeños en móvil */
+  h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  h2 {
+    font-size: 1.25rem !important;
+  }
+  
+  h3 {
+    font-size: 1.125rem !important;
+  }
+  
+  /* Botones más compactos */
+  button {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+  
+  /* Inputs más pequeños */
+  input, textarea, select {
+    font-size: 0.875rem !important;
+    padding: 0.5rem !important;
+  }
+  
+  /* Cards más compactas */
+  .stat-card,
+  .quick-access-card {
+    padding: 0.75rem !important;
+  }
+  
+  /* Iconos más pequeños */
+  svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+}

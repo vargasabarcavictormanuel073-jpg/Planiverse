@@ -1,0 +1,66 @@
+{
+  "packageId": "com.planiverse.app",
+  "host": "planiverse.vercel.app",
+  "name": "Planiverse",
+  "launcherName": "Planiverse",
+  "display": "standalone",
+  "themeColor": "#3B82F6",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#FFFFFF",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://planiverse.vercel.app/icon-512x512.png",
+  "maskableIconUrl": "https://planiverse.vercel.app/icon-512x512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "C:\\Users\\Admin\\Downloads\\AppNylaMovil\\android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "2",
+  "appVersionCode": 2,
+  "shortcuts": [
+    {
+      "name": "Tareas",
+      "shortName": "Tareas",
+      "url": "https://planiverse.vercel.app/task",
+      "chosenIconUrl": "https://planiverse.vercel.app/icon-192x192.png"
+    },
+    {
+      "name": "Calendario",
+      "shortName": "Calendario",
+      "url": "https://planiverse.vercel.app/calendar",
+      "chosenIconUrl": "https://planiverse.vercel.app/icon-192x192.png"
+    },
+    {
+      "name": "Notas",
+      "shortName": "Notas",
+      "url": "https://planiverse.vercel.app/notes",
+      "chosenIconUrl": "https://planiverse.vercel.app/icon-192x192.png"
+    }
+  ],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://planiverse.vercel.app/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://planiverse.vercel.app/",
+  "minSdkVersion": 21,
+  "orientation": "portrait-primary",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "displayOverride": [],
+  "appVersion": "2"
+}
