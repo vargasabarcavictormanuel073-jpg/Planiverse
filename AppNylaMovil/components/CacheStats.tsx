@@ -1,6 +1,10 @@
 /**
- * CacheStats - Componente para mostrar estadísticas del caché
- * Útil para debugging y monitoreo
+ * CacheStats - Estadísticas del caché local
+ * Módulo: Perfil / Diagnóstico
+ *
+ * Muestra información sobre el caché almacenado en localStorage:
+ * tamaño total, número de entradas y botón para limpiar el caché.
+ * Visible en la página de perfil del usuario.
  */
 
 'use client';

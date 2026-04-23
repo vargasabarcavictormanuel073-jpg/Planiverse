@@ -1,5 +1,9 @@
 /**
  * ShareModal - Modal para compartir contenido
+ * Módulo: Componentes UI / Notas y Tareas
+ *
+ * Muestra un modal con opciones para compartir una nota o tarea.
+ * Usa ShareService internamente para manejar la Web Share API o el portapapeles.
  */
 
 'use client';

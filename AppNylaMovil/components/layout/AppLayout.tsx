@@ -1,4 +1,13 @@
-﻿'use client';
+﻿/**
+ * AppLayout - Componente de layout principal para páginas autenticadas
+ * Módulo: Layout / Estructura
+ *
+ * Envuelve todas las páginas internas de la app (dashboard, tareas, calendario, etc.)
+ * Incluye la barra superior (Topbar) y el contenido de la página.
+ * Solo debe usarse en páginas que requieren autenticación.
+ */
+
+'use client';
 
 import { ReactNode } from 'react';
 import Topbar from './Topbar';

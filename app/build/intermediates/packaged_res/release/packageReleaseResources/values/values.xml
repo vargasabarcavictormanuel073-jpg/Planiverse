@@ -29,7 +29,7 @@
     <string name="launchUrl" translatable="false">https://planiverse.vercel.app/</string>
     <string name="launcherName" translatable="false">Planiverse</string>
     <string name="orientation" translatable="false">portrait-primary</string>
-    <string name="providerAuthority" translatable="false">com.planiverse.app.fileprovider</string>
+    <string name="providerAuthority" translatable="false">com.sistemsvlu.planiverse.fileprovider</string>
     <string name="shortcut_name_0" translatable="false">Tareas</string>
     <string name="shortcut_name_1" translatable="false">Calendario</string>
     <string name="shortcut_name_2" translatable="false">Notas</string>

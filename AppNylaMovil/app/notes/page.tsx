@@ -1,3 +1,12 @@
+/**
+ * NotasPage - Página de gestión de notas
+ * Módulo: Notas
+ *
+ * Permite al usuario crear, editar, eliminar y buscar notas con etiquetas.
+ * Soporta exportación a PDF y compartir notas.
+ * Los datos se almacenan en Firestore bajo la colección "notes".
+ */
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';

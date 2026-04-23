@@ -3,8 +3,8 @@
 # min_api: 21
 # common_typos_disable
 # {"id":"com.android.tools.r8.mapping","version":"2.2"}
-# pg_map_id: aad2212
-# pg_map_hash: SHA-256 aad2212d1287d1debef3e37493cd78bcabb9fc432420684fe709e18ab5d21178
+# pg_map_id: e6afeb5
+# pg_map_hash: SHA-256 e6afeb5d1508137ab8990b39880f3d52be9cd5e2d525ccb703a8a01c1cd08c86
 android.support.customtabs.ICustomTabsCallback -> a.a:
 # {"id":"sourceFile","fileName":"ICustomTabsCallback.java"}
     java.lang.String DESCRIPTOR -> a
@@ -24606,15 +24606,15 @@ com.google.common.collect.UnmodifiableListIterator -> M.s:
     1:4:void <init>():34:34 -> <init>
     1:6:void add(java.lang.Object):46:46 -> add
     1:6:void set(java.lang.Object):59:59 -> set
-com.planiverse.app.Application -> com.planiverse.app.Application:
+com.sistemsvlu.planiverse.Application -> com.sistemsvlu.planiverse.Application:
 # {"id":"sourceFile","fileName":"Application.java"}
     1:4:void <init>():20:20 -> <init>
     1:4:void onCreate():26:26 -> onCreate
-com.planiverse.app.DelegationService -> com.planiverse.app.DelegationService:
+com.sistemsvlu.planiverse.DelegationService -> com.sistemsvlu.planiverse.DelegationService:
 # {"id":"sourceFile","fileName":"DelegationService.java"}
     1:4:void <init>():5:5 -> <init>
     1:4:void onCreate():9:9 -> onCreate
-com.planiverse.app.LauncherActivity -> com.planiverse.app.LauncherActivity:
+com.sistemsvlu.planiverse.LauncherActivity -> com.sistemsvlu.planiverse.LauncherActivity:
 # {"id":"sourceFile","fileName":"LauncherActivity.java"}
     1:4:void <init>():25:25 -> <init>
     1:5:android.net.Uri getLaunchingUrl():48:48 -> i

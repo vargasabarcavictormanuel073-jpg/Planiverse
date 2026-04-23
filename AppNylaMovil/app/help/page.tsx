@@ -1,3 +1,12 @@
+/**
+ * AyudaPage - Página de ayuda y soporte
+ * Módulo: Ayuda
+ *
+ * Muestra preguntas frecuentes, errores comunes y datos de contacto de soporte.
+ * Accesible sin autenticación desde la pantalla de inicio de sesión.
+ * Contacto de soporte: sistemsvlu@gmail.com
+ */
+
 'use client';
 
 import { useRouter } from 'next/navigation';

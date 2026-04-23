@@ -1,6 +1,9 @@
 /**
  * PDFService - Servicio para exportar contenido a PDF
- * Usa jsPDF para generar documentos PDF desde el navegador
+ * Módulo: Servicios / Exportación
+ *
+ * Usa jsPDF para generar documentos PDF desde el navegador.
+ * Permite exportar notas y tareas como archivos PDF descargables.
  */
 
 import { jsPDF } from 'jspdf';

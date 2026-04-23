@@ -1,5 +1,9 @@
 /**
  * ShareService - Servicio para compartir contenido
+ * Módulo: Servicios / Utilidades
+ *
+ * Permite compartir tareas, notas y recordatorios usando la Web Share API.
+ * Si el navegador no soporta la API, copia el contenido al portapapeles.
  */
 
 interface ShareableTask {

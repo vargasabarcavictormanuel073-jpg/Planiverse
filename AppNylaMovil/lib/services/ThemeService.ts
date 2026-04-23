@@ -1,5 +1,10 @@
 /**
  * ThemeService - Servicio para gestión de modo oscuro/claro
+ * Módulo: Servicios / Tema Visual
+ *
+ * Maneja el estado del modo oscuro/claro de la aplicación.
+ * Lee y guarda la preferencia en localStorage bajo la clave "planiverse_dark_mode".
+ * Aplica o remueve la clase "dark" en el elemento raíz del documento.
  */
 
 export class ThemeService {

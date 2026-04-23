@@ -1,6 +1,10 @@
 /**
- * Servicio de notificaciones del navegador (Web Notifications API)
+ * NotificationsService - Servicio de notificaciones del navegador
+ * Módulo: Servicios / Notificaciones
+ *
+ * Usa la Web Notifications API para enviar notificaciones push.
  * Funciona en web y Android (PWA) sin necesidad de Firebase Cloud Messaging.
+ * Solicita permiso al usuario antes de enviar notificaciones.
  */
 
 export class NotificationService {

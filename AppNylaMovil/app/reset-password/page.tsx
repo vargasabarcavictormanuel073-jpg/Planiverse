@@ -1,3 +1,12 @@
+/**
+ * RestablecerContraseñaPage - Página para restablecer contraseña
+ * Módulo: Autenticación
+ *
+ * Permite al usuario establecer una nueva contraseña usando el enlace enviado por Firebase.
+ * Lee el código de acción desde la URL, lo verifica y permite cambiar la contraseña.
+ * Después del cambio exitoso, cierra la sesión y redirige al inicio de sesión.
+ */
+
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';

@@ -1,3 +1,12 @@
+/**
+ * PasswordInput - Campo de contraseña con toggle de visibilidad
+ * Módulo: Autenticación / Componentes UI
+ *
+ * Componente reutilizable para campos de contraseña.
+ * Incluye un botón de ojo para mostrar u ocultar la contraseña.
+ * Usado en: inicio de sesión, registro y restablecimiento de contraseña.
+ */
+
 'use client';
 
 import { useState } from 'react';

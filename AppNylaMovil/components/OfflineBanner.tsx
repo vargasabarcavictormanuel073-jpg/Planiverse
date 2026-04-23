@@ -1,3 +1,12 @@
+/**
+ * OfflineBanner - Banner de estado de conexión
+ * Módulo: PWA / Conectividad
+ *
+ * Muestra un banner en la parte superior cuando el usuario pierde la conexión a internet.
+ * Cuando la conexión se restaura, muestra un mensaje de confirmación brevemente.
+ * Usa los eventos "online" y "offline" del navegador.
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';

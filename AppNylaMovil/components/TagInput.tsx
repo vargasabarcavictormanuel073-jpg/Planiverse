@@ -1,5 +1,9 @@
 /**
  * TagInput - Componente para agregar y gestionar etiquetas
+ * Módulo: Componentes UI / Notas
+ *
+ * Permite al usuario escribir y agregar etiquetas (tags) a una nota.
+ * Las etiquetas se agregan presionando Enter o coma, y se pueden eliminar individualmente.
  */
 
 'use client';

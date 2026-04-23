@@ -1,5 +1,5 @@
 {
-  "packageId": "com.planiverse.app",
+  "packageId": "com.sistemsvlu.planiverse",
   "host": "planiverse.vercel.app",
   "name": "Planiverse",
   "launcherName": "Planiverse",
@@ -20,8 +20,8 @@
     "path": "C:\\Users\\Admin\\Downloads\\AppNylaMovil\\android.keystore",
     "alias": "android"
   },
-  "appVersionName": "2",
-  "appVersionCode": 2,
+  "appVersionName": "3",
+  "appVersionCode": 3,
   "shortcuts": [
     {
       "name": "Tareas",
@@ -62,5 +62,5 @@
   "fileHandlers": [],
   "launchHandlerClientMode": "",
   "displayOverride": [],
-  "appVersion": "2"
+  "appVersion": "3"
 }
