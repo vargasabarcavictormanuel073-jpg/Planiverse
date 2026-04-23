@@ -54,10 +54,9 @@ export function useCachedFirestore<T>(
 
       // 2. Sincronizar con Firestore en background
       if (userId) {
-        const firestoreData = await FirestoreService.readCollection<T>(
-          'users',
-          userId,
-          collection
+        const firestoreData = await FirestoreService.readAll<T>(
+          collection,
+          userId
         );
 
         if (firestoreData) {

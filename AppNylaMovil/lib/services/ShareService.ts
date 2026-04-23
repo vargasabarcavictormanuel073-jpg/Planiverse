@@ -16,6 +16,7 @@ interface ShareableTask {
   dueDate?: string;
   priority?: string;
   tags?: string[];
+  completed?: boolean;
 }
 
 interface ShareableNote {

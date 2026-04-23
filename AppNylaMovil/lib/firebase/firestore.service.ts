@@ -91,7 +91,7 @@ export const FirestoreService = {
       if (err.code === 'unavailable') {
         throw new Error('Sin conexión a internet');
       }
-      if (error.code === 'permission-denied') {
+      if (err.code === 'permission-denied') {
         throw new Error('No tienes permiso para esta operación');
       }
       
@@ -124,7 +124,7 @@ export const FirestoreService = {
       if (err.code === 'unavailable') {
         throw new Error('Sin conexión a internet');
       }
-      if (error.code === 'permission-denied') {
+      if (err.code === 'permission-denied') {
         throw new Error('No tienes permiso para esta operación');
       }
       
