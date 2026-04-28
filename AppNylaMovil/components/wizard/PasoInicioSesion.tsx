@@ -275,12 +275,9 @@ export default function AuthStep({
             href="/ayuda"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-400 hover:text-white transition-colors"
+            className="text-sm text-white/70 hover:text-white transition-colors"
           >
-            ¿Necesitas ayuda?{' '}
-            <span className="text-purple-300 hover:text-white underline underline-offset-2">
-              Centro de Ayuda
-            </span>
+            Centro de Ayuda
           </a>
         </div>
       </div>

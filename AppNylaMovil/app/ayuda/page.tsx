@@ -1,86 +1,83 @@
 /**
- * Página de Ayuda
+ * Página de Ayuda - Accesible sin autenticación
  */
 
 'use client';
 
 import { useRouter } from 'next/navigation';
-import AppLayout from '@/components/layout/LayoutPrincipalApp';
 
 export default function AyudaPage() {
   const router = useRouter();
 
   return (
-    <AppLayout title="Ayuda">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-2xl mx-auto">
         {/* Encabezado */}
         <div className="mb-8">
           <button
-            onClick={() => router.push('/inicio')}
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 transition-colors text-sm"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Volver al inicio
+            Volver
           </button>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">
             Centro de Ayuda
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-500 text-sm">
             Encuentra respuestas a las preguntas más frecuentes
           </p>
         </div>
 
         {/* Preguntas Frecuentes */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Sección: Cuenta */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-base font-bold text-gray-900 mb-4 uppercase tracking-wide text-xs text-gray-400">
               Cuenta
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">
+                <h3 className="font-semibold text-gray-900 mb-1">
                   ¿Cómo inicio sesión?
                 </h3>
-                <p className="text-gray-600">
-                  Inicia sesión con tu cuenta de Google. Haz clic en "Continuar con Google" en la pantalla de autenticación.
+                <p className="text-gray-600 text-sm">
+                  Inicia sesión con tu cuenta de Google. Toca "Continuar con Google" en la pantalla de autenticación.
                 </p>
               </div>
-
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">
+                <h3 className="font-semibold text-gray-900 mb-1">
                   ¿Qué pasa si cierro sesión?
                 </h3>
-                <p className="text-gray-600">
-                  Puedes cerrar sesión desde el menú de configuración. La próxima vez que entres, inicia sesión de nuevo con Google.
+                <p className="text-gray-600 text-sm">
+                  Puedes cerrar sesión desde configuración. La próxima vez que entres, inicia sesión de nuevo con Google.
                 </p>
               </div>
             </div>
           </div>
 
           {/* Sección: Módulos */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wide">
               Módulos
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">
+                <h3 className="font-semibold text-gray-900 mb-1">
                   ¿Qué módulos están disponibles?
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm">
                   Planiverse incluye: Tareas, Notas, Calendario, Rutinas, Recordatorios y Herramientas educativas.
                 </p>
               </div>
-
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">
+                <h3 className="font-semibold text-gray-900 mb-1">
                   ¿Cómo accedo a los módulos?
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm">
                   Desde el inicio toca "Ver todos los módulos", o usa el menú de navegación superior.
                 </p>
               </div>
@@ -88,23 +85,21 @@ export default function AyudaPage() {
           </div>
 
           {/* Sección: Soporte */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-wide">
               Soporte
             </h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  ¿Cómo reporto un problema?
-                </h3>
-                <p className="text-gray-600">
-                  Si encuentras algún problema, contacta al equipo de soporte a través del correo de tu institución.
-                </p>
-              </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-1">
+                ¿Cómo reporto un problema?
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Si encuentras algún problema, contacta al equipo de soporte a través del correo de tu institución.
+              </p>
             </div>
           </div>
         </div>
       </div>
-    </AppLayout>
+    </div>
   );
 }
