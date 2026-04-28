@@ -192,18 +192,32 @@ export default function AuthStep({
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8 border border-gray-100">
-        {/* Encabezado */}
+      <div className="bg-gradient-to-br from-slate-700/80 via-purple-900/80 to-slate-800/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 sm:p-10 border border-white/10">
+        {/* Logo/Icono */}
         <div className="text-center mb-6">
-          <div className="mb-4 inline-block">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 via-green-500 to-cyan-500 rounded-2xl flex items-center justify-center text-4xl shadow-lg transform hover:scale-110 transition-transform">
-              🚀
+          <div className="mb-6 inline-block">
+            <div className="w-32 h-32 flex items-center justify-center">
+              {/* Icono isométrico simplificado */}
+              <svg viewBox="0 0 200 200" className="w-full h-full">
+                {/* Cubo base en dorado */}
+                <path d="M100 40 L160 70 L160 130 L100 160 L40 130 L40 70 Z" 
+                      fill="none" stroke="#F59E0B" strokeWidth="4" opacity="0.8"/>
+                <path d="M100 40 L100 100 M100 100 L160 130 M100 100 L40 130" 
+                      stroke="#F59E0B" strokeWidth="4" opacity="0.6"/>
+                
+                {/* Flecha en cyan */}
+                <path d="M120 80 L160 60 L160 100 L140 110" 
+                      fill="none" stroke="#06B6D4" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M160 60 L150 50 M160 60 L170 50" 
+                      stroke="#06B6D4" strokeWidth="5" strokeLinecap="round"/>
+              </svg>
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 via-green-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-            Bienvenido a Planiverse
+          
+          <h1 className="text-4xl sm:text-5xl font-bold text-yellow-400 mb-3 drop-shadow-lg">
+            Bienvenido a<br/>Planiverse
           </h1>
-          <p className="text-sm sm:text-base text-gray-600">
+          <p className="text-base text-gray-200">
             Tu espacio para organizar y alcanzar tus metas
           </p>
         </div>
@@ -213,21 +227,21 @@ export default function AuthStep({
           <div
             role="alert"
             aria-live="assertive"
-            className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg animate-shake"
+            className="mb-4 p-3 bg-red-500/20 border border-red-400/50 rounded-lg animate-shake backdrop-blur-sm"
           >
-            <p className="text-sm text-red-800">{localError}</p>
+            <p className="text-sm text-red-200">{localError}</p>
           </div>
         )}
 
-        {/* SOLO BOTÓN DE GOOGLE */}
+        {/* Botón de Google con gradiente */}
         <button
           type="button"
           onClick={handleGoogleLoginClick}
           disabled={isLoading}
-          className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-white border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-blue-400 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
+          className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-yellow-500 rounded-2xl text-white font-bold text-lg hover:shadow-2xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
           aria-label="Iniciar sesión con Gmail"
         >
-          <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className="w-7 h-7 bg-white rounded-full p-1" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

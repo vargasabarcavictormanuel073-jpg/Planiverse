@@ -335,21 +335,13 @@ export default function WizardContainer({ initialStep = 1 }: WizardContainerProp
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-green-50 to-cyan-100 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300 relative overflow-hidden">
-      {/* Elementos decorativos de fondo con colores de roles */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-amber-600 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300 relative overflow-hidden">
+      {/* Elementos decorativos de fondo */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Círculos animados con colores de roles */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-green-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-cyan-400 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
-        
-        {/* Iconos flotantes de planeación */}
-        <div className="absolute top-32 left-1/4 text-6xl opacity-10 animate-float">📚</div>
-        <div className="absolute top-48 right-1/4 text-5xl opacity-10 animate-float animation-delay-1000">📝</div>
-        <div className="absolute bottom-32 left-1/3 text-7xl opacity-10 animate-float animation-delay-2000">📅</div>
-        <div className="absolute top-1/2 right-1/3 text-6xl opacity-10 animate-float animation-delay-3000">✏️</div>
-        <div className="absolute bottom-48 right-1/4 text-5xl opacity-10 animate-float animation-delay-4000">📊</div>
-        <div className="absolute top-64 left-1/2 text-6xl opacity-10 animate-float animation-delay-5000">🎯</div>
+        {/* Círculos animados con colores del nuevo diseño */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
