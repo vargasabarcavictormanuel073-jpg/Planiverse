@@ -291,6 +291,15 @@ html.dark body textarea::placeholder {
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
 @keyframes shake {
   0%, 100% {
     transform: translateX(0);
@@ -318,12 +327,28 @@ html.dark body textarea::placeholder {
   animation: blob 7s infinite;
 }
 
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
 .animation-delay-2000 {
   animation-delay: 2s;
 }
 
+.animation-delay-3000 {
+  animation-delay: 3s;
+}
+
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+.animation-delay-5000 {
+  animation-delay: 5s;
 }
 
 .animate-shake {

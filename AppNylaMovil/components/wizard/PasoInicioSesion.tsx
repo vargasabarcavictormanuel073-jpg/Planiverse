@@ -196,11 +196,11 @@ export default function AuthStep({
         {/* Encabezado */}
         <div className="text-center mb-6">
           <div className="mb-4 inline-block">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-4xl shadow-lg transform hover:scale-110 transition-transform">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 via-green-500 to-cyan-500 rounded-2xl flex items-center justify-center text-4xl shadow-lg transform hover:scale-110 transition-transform">
               🚀
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 via-green-600 to-cyan-600 bg-clip-text text-transparent mb-2">
             Bienvenido a Planiverse
           </h1>
           <p className="text-sm sm:text-base text-gray-600">
@@ -257,25 +257,6 @@ export default function AuthStep({
             'Continuar con Google'
           )}
         </button>
-
-        {/* Features */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 text-center mb-4 font-medium">¿Por qué Planiverse?</p>
-          <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl mb-1">📚</div>
-              <p className="text-xs text-gray-700 font-medium">Organiza</p>
-            </div>
-            <div className="p-3 bg-purple-50 rounded-lg">
-              <div className="text-2xl mb-1">🎯</div>
-              <p className="text-xs text-gray-700 font-medium">Planifica</p>
-            </div>
-            <div className="p-3 bg-pink-50 rounded-lg">
-              <div className="text-2xl mb-1">✨</div>
-              <p className="text-xs text-gray-700 font-medium">Alcanza</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
