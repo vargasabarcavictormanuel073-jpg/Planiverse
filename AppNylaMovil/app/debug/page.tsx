@@ -134,10 +134,24 @@ export default function DebugPage() {
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-4">
+          <button
+            onClick={() => {
+              // Limpiar TODO el localStorage
+              localStorage.clear();
+              // Limpiar sessionStorage también
+              sessionStorage.clear();
+              alert('✅ Sesión limpiada completamente. Recargando página...');
+              window.location.href = '/';
+            }}
+            className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+          >
+            🗑️ Limpiar Sesión Completa
+          </button>
+          
           <a
             href="/autenticacion"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-block font-medium"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-block font-medium text-center"
           >
             Ir a Autenticación
           </a>
