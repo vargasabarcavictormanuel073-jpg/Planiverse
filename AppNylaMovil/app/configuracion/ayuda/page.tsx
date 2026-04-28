@@ -1,182 +1,175 @@
 /**
- * AyudaPage - Página de ayuda y soporte
- * Módulo: Ayuda
- *
- * Muestra preguntas frecuentes, errores comunes y datos de contacto de soporte.
- * Accesible sin autenticación desde la pantalla de inicio de sesión.
- * Contacto de soporte: sistemsvlu@gmail.com
+ * Página de Ayuda - Dentro de la app (con AppLayout)
  */
 
 'use client';
 
 import { useRouter } from 'next/navigation';
+import AppLayout from '@/components/layout/LayoutPrincipalApp';
 
-const ERRORES_COMUNES = [
+const FAQS = [
   {
     emoji: '🔐',
-    titulo: 'No puedo iniciar sesión',
-    descripcion: 'Verifica que tu correo y contraseña sean correctos. Si olvidaste tu contraseña, cierra la app, vuelve a abrirla y usa la opción "¿Olvidaste tu contraseña?" en la pantalla de inicio.',
+    titulo: '¿Cómo inicio sesión?',
+    descripcion: 'Toca "Continuar con Google" y selecciona tu cuenta. No necesitas contraseña, solo tu cuenta de Google.',
   },
   {
-    emoji: '📧',
-    titulo: 'No recibo el correo de verificación',
-    descripcion: 'Revisa tu carpeta de spam o correo no deseado. Si no aparece, espera unos minutos e intenta reenviar el correo desde la pantalla de inicio de sesión.',
-  },
-  {
-    emoji: '🌐',
-    titulo: 'La app no carga o se queda en pantalla blanca',
-    descripcion: 'Verifica tu conexión a internet. Si el problema persiste, recarga la página (en web) o cierra y vuelve a abrir la app. También puedes limpiar el caché del navegador.',
+    emoji: '📵',
+    titulo: 'La app se queda cargando infinito',
+    descripcion: 'Esto puede pasar si cerraste la app mientras se guardaban datos. Abre las herramientas del navegador (F12), ve a Application → Storage y toca "Clear site data". Luego recarga.',
   },
   {
     emoji: '💾',
+    titulo: '¿Para qué sirve el caché?',
+    descripcion: 'El caché guarda tus datos localmente para que la app cargue más rápido sin internet. Si ves información desactualizada o errores raros, limpiar el caché suele solucionarlo.',
+  },
+  {
+    emoji: '🔄',
     titulo: 'Mis datos no se guardan',
-    descripcion: 'Asegúrate de tener conexión a internet al guardar. Los datos se sincronizan con la nube en tiempo real. Si usas modo privado/incógnito, los datos no se guardarán localmente.',
+    descripcion: 'Asegúrate de tener conexión a internet al guardar. Los datos se sincronizan con la nube en tiempo real. Si usas modo incógnito, los datos locales no se conservarán al cerrar.',
+  },
+  {
+    emoji: '📱',
+    titulo: '¿Cómo instalo la app en mi celular?',
+    descripcion: 'Planiverse es una PWA. En Android abre Chrome y toca "Agregar a pantalla de inicio". En iPhone usa Safari, toca el botón Compartir y selecciona "Añadir a pantalla de inicio".',
   },
   {
     emoji: '🎨',
-    titulo: 'Los colores de la app no cambian según mi rol',
-    descripcion: 'Recarga la página una vez después de iniciar sesión. Los colores se aplican automáticamente según tu rol (Estudiante, Maestro u Otro) al cargar la aplicación.',
+    titulo: 'Los colores no cambian según mi rol',
+    descripcion: 'Recarga la página una vez después de iniciar sesión. Los colores se aplican automáticamente según tu rol (Estudiante, Maestro u Otro).',
   },
   {
     emoji: '🔔',
     titulo: 'No recibo notificaciones',
-    descripcion: 'Asegúrate de haber aceptado los permisos de notificaciones cuando la app lo solicitó. En tu dispositivo, ve a Configuración > Notificaciones > Planiverse y actívalas.',
-  },
-  {
-    emoji: '📱',
-    titulo: 'La app no se instala en mi celular',
-    descripcion: 'Planiverse es una PWA (app web progresiva). En Android, abre la app en Chrome y toca "Agregar a pantalla de inicio". En iPhone, usa Safari y toca el botón Compartir > "Añadir a pantalla de inicio".',
-  },
-  {
-    emoji: '🔄',
-    titulo: 'La app muestra información desactualizada',
-    descripcion: 'Recarga la página o cierra y vuelve a abrir la app. Si el problema persiste, cierra sesión, vuelve a iniciarla y los datos se sincronizarán desde la nube.',
-  },
-  {
-    emoji: '❌',
-    titulo: 'Error al crear mi cuenta',
-    descripcion: 'Verifica que tu correo sea válido y que la contraseña tenga al menos 6 caracteres. Si el correo ya está registrado, intenta iniciar sesión en lugar de crear una cuenta nueva.',
+    descripcion: 'Asegúrate de haber aceptado los permisos cuando la app lo solicitó. En tu dispositivo ve a Configuración → Notificaciones → Planiverse y actívalas.',
   },
   {
     emoji: '🚪',
-    titulo: 'No puedo cerrar sesión',
-    descripcion: 'Abre el menú lateral (ícono de tres líneas arriba a la izquierda) y toca "Cerrar sesión" al final del menú. Si no funciona, limpia el caché del navegador.',
+    titulo: 'Borré mi cuenta pero sigo viendo la app',
+    descripcion: 'Si eliminaste tu cuenta sin cerrar sesión, la sesión queda atrapada. Abre la consola del navegador (F12) y ejecuta: localStorage.clear(); location.href="/autenticacion"',
+  },
+  {
+    emoji: '📅',
+    titulo: 'Un evento del calendario quedó corrupto',
+    descripcion: 'Si un evento no muestra su contenido, ve al módulo de Calendario y usa el botón "Limpiar Todos" para eliminar los eventos corruptos y empezar de nuevo.',
+  },
+  {
+    emoji: '📝',
+    titulo: 'Mis notas o tareas desaparecieron',
+    descripcion: 'Los datos se guardan en la nube. Si no aparecen, verifica tu conexión y recarga la página. Si el problema persiste, cierra sesión y vuelve a entrar para forzar la sincronización.',
+  },
+  {
+    emoji: '⚡',
+    titulo: 'La app va lenta',
+    descripcion: 'Limpia el caché del navegador (Ctrl+Shift+Delete en Chrome). Si usas la PWA instalada, desinstálala y vuelve a instalarla desde el navegador para obtener la versión más reciente.',
+  },
+  {
+    emoji: '🌐',
+    titulo: 'Pantalla en blanco al abrir',
+    descripcion: 'Recarga la página con Ctrl+Shift+R (recarga forzada sin caché). Si persiste, abre en modo incógnito para descartar extensiones del navegador como causa del problema.',
   },
 ];
 
-export default function HelpPage() {
+const MODULOS = [
+  { emoji: '✅', nombre: 'Tareas', desc: 'Crea y organiza tus tareas con fechas límite y prioridades.' },
+  { emoji: '📝', nombre: 'Notas', desc: 'Guarda apuntes rápidos y notas importantes.' },
+  { emoji: '📅', nombre: 'Calendario', desc: 'Visualiza tus eventos y evaluaciones en un calendario mensual.' },
+  { emoji: '🔁', nombre: 'Rutinas', desc: 'Crea hábitos y rutinas diarias para mantener el ritmo.' },
+  { emoji: '🔔', nombre: 'Recordatorios', desc: 'Configura alertas para no olvidar nada importante.' },
+  { emoji: '🛠️', nombre: 'Herramientas', desc: 'Calculadora de notas, temporizador Pomodoro, generador de horarios y más.' },
+];
+
+export default function AyudaConfigPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Topbar simple sin autenticación */}
-      <div className="sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
-          >
-            ← Volver
-          </button>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Ayuda</h1>
-          <div className="w-20" />
-        </div>
-      </div>
+    <AppLayout title="Ayuda">
+      <div className="max-w-3xl mx-auto">
 
-      <main className="pt-8 px-4 md:px-8 py-8 max-w-7xl mx-auto">
-      <div className="max-w-3xl mx-auto space-y-8">
-
-        {/* Encabezado */}
-        <div className="text-center py-6">
-          <div
-            className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-4"
-            style={{ backgroundColor: 'var(--color-background)' }}
-          >
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
             🆘
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Centro de Ayuda
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Encuentra soluciones a los problemas más comunes
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">Centro de Ayuda</h1>
+          <p className="text-gray-500 text-sm">Soluciones a los problemas más comunes de Planiverse</p>
         </div>
 
-        {/* Errores comunes */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
-            <span>⚠️</span> Problemas Frecuentes
-          </h3>
-          <div className="space-y-4">
-            {ERRORES_COMUNES.map((error, i) => (
-              <details
-                key={i}
-                className="group border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden"
-              >
-                <summary className="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors list-none">
-                  <span className="text-2xl">{error.emoji}</span>
-                  <span className="flex-1 font-semibold text-gray-900 dark:text-gray-100">
-                    {error.titulo}
-                  </span>
-                  <svg
-                    className="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </summary>
-                <div className="px-4 pb-4 pt-2 bg-gray-50 dark:bg-gray-700/50">
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {error.descripcion}
-                  </p>
+        <div className="space-y-5">
+
+          {/* Módulos disponibles */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Módulos disponibles</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {MODULOS.map((m, i) => (
+                <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                  <span className="text-2xl">{m.emoji}</span>
+                  <div>
+                    <p className="font-semibold text-gray-800 text-sm">{m.nombre}</p>
+                    <p className="text-gray-500 text-xs">{m.desc}</p>
+                  </div>
                 </div>
-              </details>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Contacto a soporte */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
-            <span>📞</span> Contactar Soporte
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            ¿No encontraste solución? Nuestro equipo está listo para ayudarte.
-          </p>
+          {/* FAQs */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Problemas frecuentes</h2>
+            <div className="space-y-2">
+              {FAQS.map((faq, i) => (
+                <details key={i} className="group border border-gray-100 rounded-xl overflow-hidden">
+                  <summary className="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 transition-colors list-none">
+                    <span className="text-xl">{faq.emoji}</span>
+                    <span className="flex-1 font-semibold text-gray-800 text-sm">{faq.titulo}</span>
+                    <svg className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <div className="px-4 pb-4 pt-1 bg-gray-50">
+                    <p className="text-gray-600 text-sm leading-relaxed">{faq.descripcion}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            {/* Email */}
+          {/* Tip caché */}
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+            <div className="flex gap-3">
+              <span className="text-2xl">💡</span>
+              <div>
+                <p className="font-bold text-amber-800 text-sm mb-1">Tip: Limpia el caché si algo falla</p>
+                <p className="text-amber-700 text-sm">
+                  El 90% de los errores raros se resuelven limpiando el caché. En Chrome: <strong>Ctrl+Shift+Delete</strong> → selecciona "Imágenes y archivos en caché" → Borrar datos.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Contacto */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">¿Necesitas más ayuda?</h2>
             <a
               href="mailto:sistemsvlu@gmail.com"
-              className="flex items-center gap-4 p-4 rounded-xl border-2 border-blue-200 dark:border-blue-800 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+              className="flex items-center gap-4 p-4 rounded-xl border-2 border-blue-100 hover:bg-blue-50 transition-colors"
             >
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
                 📧
               </div>
               <div>
-                <p className="font-bold text-gray-900 dark:text-gray-100">Correo</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">sistemsvlu@gmail.com</p>
-                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Respuesta en 24 hrs</p>
+                <p className="font-bold text-gray-900 text-sm">Correo de soporte</p>
+                <p className="text-blue-600 text-sm">sistemsvlu@gmail.com</p>
+                <p className="text-xs text-gray-400 mt-0.5">Respuesta en 24 hrs · Lun–Vie 9am–6pm (México)</p>
               </div>
             </a>
           </div>
 
-          {/* Horario */}
-          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-            <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-              🕐 Horario de atención: Lunes a Viernes, 9:00 AM – 6:00 PM (hora México)
-            </p>
-          </div>
+          <p className="text-center text-xs text-gray-400 pb-4">
+            Planiverse v1.0.0 · Hecho con ❤️ para estudiantes y maestros
+          </p>
         </div>
-
-        {/* Versión */}
-        <p className="text-center text-xs text-gray-400 dark:text-gray-600 pb-4">
-          Planiverse v1.0.0 · Hecho con ❤️ para estudiantes y maestros
-        </p>
       </div>
-      </main>
-    </div>
+    </AppLayout>
   );
 }
