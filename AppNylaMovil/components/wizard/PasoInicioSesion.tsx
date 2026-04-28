@@ -268,6 +268,21 @@ export default function AuthStep({
             'Continuar con Google'
           )}
         </button>
+
+        {/* Link al Centro de Ayuda */}
+        <div className="mt-5 text-center">
+          <a
+            href="/ayuda"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            ¿Necesitas ayuda?{' '}
+            <span className="text-purple-300 hover:text-white underline underline-offset-2">
+              Centro de Ayuda
+            </span>
+          </a>
+        </div>
       </div>
     </div>
   );
