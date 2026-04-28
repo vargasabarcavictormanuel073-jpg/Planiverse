@@ -335,13 +335,93 @@ export default function WizardContainer({ initialStep = 1 }: WizardContainerProp
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-amber-600 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300 relative overflow-hidden">
-      {/* Elementos decorativos de fondo */}
+    <div className="min-h-screen bg-gradient-to-br from-[#0d1b4b] via-[#1a1060] to-[#2d1b69] py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300 relative overflow-hidden">
+      {/* Fondo decorativo: elementos flotantes como en la imagen */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Círculos animados con colores del nuevo diseño */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+        {/* Tarjeta checklist izquierda arriba */}
+        <div className="absolute top-28 left-4 sm:left-8 w-36 h-28 bg-[#1a2a5e]/70 backdrop-blur-sm rounded-2xl border border-white/10 p-3 opacity-70">
+          <div className="space-y-2">
+            {[1,2,3].map(i => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded border border-yellow-400/60 flex items-center justify-center">
+                  <svg className="w-3 h-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div className="flex-1 h-2 bg-yellow-400/40 rounded-full"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tarjeta checklist izquierda abajo */}
+        <div className="absolute bottom-28 left-4 sm:left-8 w-36 h-28 bg-[#1a2a5e]/70 backdrop-blur-sm rounded-2xl border border-white/10 p-3 opacity-70">
+          <div className="space-y-2">
+            {[1,2,3].map(i => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded border border-yellow-400/60 flex items-center justify-center">
+                  <svg className="w-3 h-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div className="flex-1 h-2 bg-yellow-400/40 rounded-full"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Checkmark grande derecha arriba */}
+        <div className="absolute top-24 right-4 sm:right-12 opacity-40">
+          <svg className="w-20 h-20 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+
+        {/* Tarjeta derecha medio */}
+        <div className="absolute top-1/2 right-4 sm:right-8 -translate-y-1/2 w-28 h-24 bg-[#1a2a5e]/50 backdrop-blur-sm rounded-2xl border border-white/10 p-3 opacity-60">
+          <div className="space-y-2">
+            {[1,2].map(i => (
+              <div key={i} className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7"/></svg>
+                <div className="flex-1 h-1.5 bg-purple-400/40 rounded-full"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Checkmark derecha abajo */}
+        <div className="absolute bottom-24 right-4 sm:right-12 opacity-30">
+          <svg className="w-16 h-16 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+
+        {/* Líneas de gráfica izquierda */}
+        <div className="absolute bottom-1/3 left-2 sm:left-6 opacity-25">
+          <svg className="w-24 h-16" viewBox="0 0 100 60">
+            <polyline points="0,50 20,35 40,40 60,20 80,25 100,10" fill="none" stroke="#A78BFA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="0" cy="50" r="3" fill="#A78BFA"/>
+            <circle cx="40" cy="40" r="3" fill="#A78BFA"/>
+            <circle cx="80" cy="25" r="3" fill="#A78BFA"/>
+          </svg>
+        </div>
+
+        {/* Líneas de gráfica derecha */}
+        <div className="absolute top-1/3 right-2 sm:right-6 opacity-25">
+          <svg className="w-20 h-14" viewBox="0 0 100 60">
+            <polyline points="0,55 25,40 50,45 75,20 100,15" fill="none" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="25" cy="40" r="3" fill="#60A5FA"/>
+            <circle cx="75" cy="20" r="3" fill="#60A5FA"/>
+          </svg>
+        </div>
+
+        {/* Hexágono decorativo */}
+        <div className="absolute bottom-16 right-1/4 opacity-15">
+          <svg className="w-16 h-16" viewBox="0 0 100 100">
+            <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="none" stroke="#A78BFA" strokeWidth="3"/>
+          </svg>
+        </div>
+
+        {/* Círculo decorativo */}
+        <div className="absolute top-1/3 left-1/4 w-8 h-8 rounded-full bg-purple-500/20 border border-purple-400/30 opacity-60"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-5 h-5 rounded-full bg-blue-400/30 border border-blue-300/30 opacity-60"></div>
+        <div className="absolute top-2/3 left-1/3 w-3 h-3 rounded-full bg-yellow-400/40 opacity-70"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">

@@ -48,10 +48,10 @@ export default function StepIndicator({ currentStep, totalSteps }: StepIndicator
                     text-xs sm:text-sm md:text-base font-semibold transition-all duration-300 ease-in-out
                     ${
                       isCompleted
-                        ? 'bg-[var(--theme-primary)] text-white scale-100'
+                        ? 'bg-purple-500 text-white scale-100'
                         : isCurrent
-                        ? 'bg-[var(--theme-primary)] text-white ring-4 ring-[var(--theme-primary)]/20 scale-110'
-                        : 'bg-gray-200 text-gray-400 scale-100'
+                        ? 'bg-white/20 text-white ring-4 ring-white/30 scale-110 border-2 border-white/60'
+                        : 'bg-white/10 text-white/40 border border-white/20 scale-100'
                     }
                   `}
                   aria-label={`Paso ${step.number}: ${step.label}${isCompleted ? ' completado' : isCurrent ? ' actual' : ''}`}
@@ -81,7 +81,7 @@ export default function StepIndicator({ currentStep, totalSteps }: StepIndicator
                 <span
                   className={`
                     mt-2 text-xs sm:text-sm md:text-base font-medium hidden sm:block transition-colors duration-300
-                    ${isCurrent ? 'text-[var(--theme-primary)]' : isCompleted ? 'text-gray-600' : 'text-gray-400'}
+                    ${isCurrent ? 'text-white' : isCompleted ? 'text-white/70' : 'text-white/40'}
                   `}
                   aria-hidden="true"
                 >
@@ -94,7 +94,7 @@ export default function StepIndicator({ currentStep, totalSteps }: StepIndicator
                 <div
                   className={`
                     h-0.5 sm:h-1 flex-1 mx-1 sm:mx-2 md:mx-3 transition-all duration-500 ease-in-out
-                    ${isCompleted ? 'bg-[var(--theme-primary)]' : 'bg-gray-200'}
+                    ${isCompleted ? 'bg-purple-500' : 'bg-white/20'}
                   `}
                   aria-hidden="true"
                 />
