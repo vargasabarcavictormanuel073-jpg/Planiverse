@@ -192,14 +192,19 @@ export default function AuthStep({
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
+      <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8 border border-gray-100">
         {/* Encabezado */}
         <div className="text-center mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          <div className="mb-4 inline-block">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-4xl shadow-lg transform hover:scale-110 transition-transform">
+              🚀
+            </div>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
             Bienvenido a Planiverse
           </h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Inicia sesión para continuar
+            Tu espacio para organizar y alcanzar tus metas
           </p>
         </div>
 
@@ -208,7 +213,7 @@ export default function AuthStep({
           <div
             role="alert"
             aria-live="assertive"
-            className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md"
+            className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg animate-shake"
           >
             <p className="text-sm text-red-800">{localError}</p>
           </div>
@@ -219,10 +224,10 @@ export default function AuthStep({
           type="button"
           onClick={handleGoogleLoginClick}
           disabled={isLoading}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-white border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-blue-400 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
           aria-label="Iniciar sesión con Gmail"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className="w-6 h-6" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -240,8 +245,37 @@ export default function AuthStep({
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          {isLoading ? 'Autenticando...' : 'Continuar con Google'}
+          {isLoading ? (
+            <span className="flex items-center gap-2">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Autenticando...
+            </span>
+          ) : (
+            'Continuar con Google'
+          )}
         </button>
+
+        {/* Features */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <p className="text-xs text-gray-500 text-center mb-4 font-medium">¿Por qué Planiverse?</p>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <div className="text-2xl mb-1">📚</div>
+              <p className="text-xs text-gray-700 font-medium">Organiza</p>
+            </div>
+            <div className="p-3 bg-purple-50 rounded-lg">
+              <div className="text-2xl mb-1">🎯</div>
+              <p className="text-xs text-gray-700 font-medium">Planifica</p>
+            </div>
+            <div className="p-3 bg-pink-50 rounded-lg">
+              <div className="text-2xl mb-1">✨</div>
+              <p className="text-xs text-gray-700 font-medium">Alcanza</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

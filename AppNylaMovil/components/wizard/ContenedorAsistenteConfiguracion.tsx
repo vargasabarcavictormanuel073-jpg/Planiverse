@@ -335,8 +335,15 @@ export default function WizardContainer({ initialStep = 1 }: WizardContainerProp
   }
 
   return (
-    <div className="min-h-screen bg-[var(--theme-background)] py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300 relative overflow-hidden">
+      {/* Elementos decorativos de fondo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Indicador de progreso */}
         <StepIndicator
           currentStep={currentStep}
@@ -348,7 +355,7 @@ export default function WizardContainer({ initialStep = 1 }: WizardContainerProp
           <div
             role="alert"
             aria-live="assertive"
-            className="max-w-3xl mx-auto mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
+            className="max-w-3xl mx-auto mb-6 p-4 bg-red-50 border border-red-200 rounded-lg animate-shake"
           >
             <p className="text-sm text-red-800">{error}</p>
           </div>
