@@ -11,7 +11,7 @@ export default function AyudaPage() {
   const router = useRouter();
 
   return (
-    <AppLayout>
+    <AppLayout title="Ayuda">
       <div className="max-w-4xl mx-auto">
         {/* Encabezado */}
         <div className="mb-8">
@@ -24,7 +24,7 @@ export default function AyudaPage() {
             </svg>
             Volver al inicio
           </button>
-          
+
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Centro de Ayuda
           </h1>
@@ -38,7 +38,7 @@ export default function AyudaPage() {
           {/* Sección: Cuenta */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Cuenta y Perfil
+              Cuenta
             </h2>
             <div className="space-y-4">
               <div>
@@ -46,16 +46,16 @@ export default function AyudaPage() {
                   ¿Cómo inicio sesión?
                 </h3>
                 <p className="text-gray-600">
-                  Puedes iniciar sesión usando tu cuenta de Google. Haz clic en "Continuar con Google" en la página de inicio.
+                  Inicia sesión con tu cuenta de Google. Haz clic en "Continuar con Google" en la pantalla de autenticación.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">
-                  ¿Cómo edito mi perfil?
+                  ¿Qué pasa si cierro sesión?
                 </h3>
                 <p className="text-gray-600">
-                  Ve a Configuración → Perfil para editar tu información personal.
+                  Puedes cerrar sesión desde el menú de configuración. La próxima vez que entres, inicia sesión de nuevo con Google.
                 </p>
               </div>
             </div>
@@ -72,16 +72,16 @@ export default function AyudaPage() {
                   ¿Qué módulos están disponibles?
                 </h3>
                 <p className="text-gray-600">
-                  Planiverse incluye módulos de Tareas, Notas, Calendario, Rutinas, Recordatorios y Herramientas educativas.
+                  Planiverse incluye: Tareas, Notas, Calendario, Rutinas, Recordatorios y Herramientas educativas.
                 </p>
               </div>
-              
+
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">
                   ¿Cómo accedo a los módulos?
                 </h3>
                 <p className="text-gray-600">
-                  Desde el inicio, haz clic en "Ver todos los módulos" o accede directamente desde el menú lateral.
+                  Desde el inicio toca "Ver todos los módulos", o usa el menú de navegación superior.
                 </p>
               </div>
             </div>
@@ -98,7 +98,7 @@ export default function AyudaPage() {
                   ¿Cómo reporto un problema?
                 </h3>
                 <p className="text-gray-600">
-                  Si encuentras algún problema, por favor contacta al equipo de soporte a través del correo electrónico proporcionado en tu institución.
+                  Si encuentras algún problema, contacta al equipo de soporte a través del correo de tu institución.
                 </p>
               </div>
             </div>
