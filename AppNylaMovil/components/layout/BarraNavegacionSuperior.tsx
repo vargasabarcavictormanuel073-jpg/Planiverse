@@ -187,7 +187,7 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
         <div className="mb-6">
           <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Perfil</h3>
           <a
-            href="/profile"
+            href="/configuracion/perfil"
             className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
           >
             Perfil
@@ -204,31 +204,31 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
               Inicio
             </a>
             <a
-              href="/task"
+              href="/modulos/tareas"
               className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
             >
               {role === 'teacher' ? 'Planeaciones' : 'Tareas'}
             </a>
             <a
-              href="/calendar"
+              href="/modulos/calendario"
               className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
             >
               Calendario
             </a>
             <a
-              href="/routines"
+              href="/modulos/rutinas"
               className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
             >
               Rutinas
             </a>
             <a
-              href="/notes"
+              href="/modulos/notas"
               className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
             >
               Notas
             </a>
             <a
-              href="/reminders"
+              href="/modulos/recordatorios"
               className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
             >
               Recordatorios
@@ -239,7 +239,7 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
         <div className="mb-6">
           <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Soporte</h3>
           <a
-            href="/help"
+            href="/ayuda"
             className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
           >
             ❓ Ayuda y Errores

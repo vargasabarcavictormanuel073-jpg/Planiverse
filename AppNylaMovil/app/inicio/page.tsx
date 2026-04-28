@@ -309,10 +309,10 @@ export default function DashboardPage() {
           Accesos Rápidos
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <QuickLink href="/task" label={role === 'teacher' ? 'Planeaciones' : 'Tareas'} icon={<TaskIcon />} />
-          <QuickLink href="/calendar" label="Calendario" icon={<CalendarIcon />} />
-          <QuickLink href="/notes" label="Notas" icon={<NoteIcon />} />
-          <QuickLink href="/reminders" label="Recordatorios" icon={<BellIcon />} />
+          <QuickLink href="/modulos/tareas" label={role === 'teacher' ? 'Planeaciones' : 'Tareas'} icon={<TaskIcon />} />
+          <QuickLink href="/modulos/calendario" label="Calendario" icon={<CalendarIcon />} />
+          <QuickLink href="/modulos/notas" label="Notas" icon={<NoteIcon />} />
+          <QuickLink href="/modulos/recordatorios" label="Recordatorios" icon={<BellIcon />} />
         </div>
       </div>
     </AppLayout>
