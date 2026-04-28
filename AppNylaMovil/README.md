@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📱 Planiverse - Organizador Personal PWA
 
-## Getting Started
+Aplicación web progresiva (PWA) para organización personal, diseñada para estudiantes, profesores y profesionales.
 
-First, run the development server:
+## 🚀 Características
+
+- ✅ **Tareas** - Gestión de tareas con prioridades y fechas
+- 📅 **Calendario** - Visualización de eventos y evaluaciones
+- 📝 **Notas** - Sistema de notas con etiquetas
+- ⏰ **Recordatorios** - Notificaciones personalizadas
+- 🔄 **Rutinas** - Gestión de rutinas diarias
+- 🛠️ **Herramientas** - Suite de herramientas educativas
+
+## 🛠️ Tecnologías
+
+- **Framework**: Next.js 15 (App Router)
+- **UI**: React 19 + Tailwind CSS 4
+- **Backend**: Firebase (Auth + Firestore)
+- **PWA**: Service Workers + Manifest
+- **Lenguaje**: TypeScript
+
+## 📦 Instalación
 
 ```bash
+# Instalar dependencias
+npm install
+
+# Configurar variables de entorno
+cp .env.example .env.local
+# Editar .env.local con tus credenciales de Firebase
+
+# Ejecutar en desarrollo
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Compilar para producción
+npm run build
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔧 Configuración de Firebase
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Crear proyecto en [Firebase Console](https://console.firebase.google.com/)
+2. Habilitar Authentication (Email/Password y Google)
+3. Crear base de datos Firestore
+4. Copiar credenciales a `.env.local`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📁 Estructura del Proyecto
 
-## Learn More
+```
+AppNylaMovil/
+├── app/                    # Rutas de Next.js
+├── components/
+│   ├── layout/            # Componentes de layout
+│   ├── modals/            # Componentes modales
+│   ├── stats/             # Componentes de estadísticas
+│   ├── tools/             # Herramientas educativas
+│   ├── ui/                # Componentes UI reutilizables
+│   └── wizard/            # Flujo de onboarding
+├── firebase/              # Configuración y servicios de Firebase
+├── hooks/                 # Custom React hooks
+├── lib/                   # Utilidades y servicios
+├── public/                # Assets estáticos
+└── types/                 # Tipos TypeScript compartidos
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 🌐 PWA
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+La aplicación es una PWA completa con:
+- ✅ Instalable en dispositivos móviles y desktop
+- ✅ Funciona offline con Service Workers
+- ✅ Notificaciones push
+- ✅ Optimizada para rendimiento
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📱 Compatibilidad
 
-## Deploy on Vercel
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Dispositivos móviles iOS y Android
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🚀 Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+El proyecto está optimizado para Vercel:
+
+```bash
+# Deploy automático
+vercel
+
+# O conecta tu repositorio en vercel.com
+```
+
+## 📄 Licencia
+
+Proyecto privado - Todos los derechos reservados
+
+## 👨‍💻 Desarrollo
+
+```bash
+# Ejecutar en modo desarrollo
+npm run dev
+
+# Linter
+npm run lint
+
+# Build de producción
+npm run build
+```
+
+---
+
+**Planiverse** - Tu organizador personal inteligente 🎯

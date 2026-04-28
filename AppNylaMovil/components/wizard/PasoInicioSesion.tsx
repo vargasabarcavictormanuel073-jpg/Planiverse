@@ -1,0 +1,291 @@
+/**
+ * AuthStep - Componente para autenticación inicial (Paso 1 del wizard)
+ * Feature: firebase-migration
+ * 
+ * Proporciona autenticación con Firebase usando Google OAuth
+ * 
+ * Requisitos: 1.1-1.4
+ */
+
+'use client';
+
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { AuthError, AuthErrorCode, UserRole, Theme } from '@/lib/auth/types';
+import { useFirebaseAuth } from '@/firebase/hooks/useFirebaseAuth';
+import { LocalStorageManager } from '@/lib/auth/services/LocalStorageManager';
+import { FirestoreService } from '@/firebase/services/firestore.service';
+import { ThemeManager } from '@/lib/auth/services/ThemeManager';
+
+interface AuthStepProps {
+  onAuthSuccess: (userId: string, isNewUser: boolean) => void;
+  onNavigateToRegister: () => void;
+  onError?: (error: AuthError) => void;
+}
+
+interface ProfileData {
+  role?: string;
+  fullName?: string;
+  nickname?: string;
+  age?: number;
+  theme?: string;
+  selectedModules?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export default function AuthStep({ 
+  onAuthSuccess, 
+  onNavigateToRegister,
+  onError 
+}: AuthStepProps) {
+  const router = useRouter();
+  const { user, error: authError, loginWithGoogle } = useFirebaseAuth();
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const hasProcessedAuthRef = useRef(false);
+  const loginAttemptedRef = useRef(false);
+  const [adBlockerDetected, setAdBlockerDetected] = useState<boolean>(false);
+
+  /**
+   * Maneja el éxito de autenticación
+   */
+  const handleAuthSuccess = useCallback(async (userId: string) => {
+    try {
+      hasProcessedAuthRef.current = true;
+      setIsLoading(true);
+      console.log('🎯 handleAuthSuccess llamado con userId:', userId);
+
+      // Crear sesión en localStorage
+      LocalStorageManager.saveSession({
+        userId: userId,
+        token: userId,
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      });
+      console.log('✅ Sesión guardada en localStorage');
+
+      // 1. Revisar localStorage PRIMERO (instantáneo, sin red)
+      const localProfile = LocalStorageManager.getProfile(userId);
+      console.log('📦 Perfil en localStorage:', localProfile);
+
+      if (localProfile && localProfile.role && localProfile.fullName) {
+        console.log('✅ Perfil completo encontrado en localStorage, redirigiendo a /inicio');
+        const theme: Theme = ThemeManager.getThemeForRole(localProfile.role as UserRole);
+        ThemeManager.applyTheme(theme);
+        localStorage.setItem('planiverse_onboarding_done', 'true');
+        
+        setTimeout(() => {
+          router.push('/inicio');
+        }, 100);
+        return;
+      }
+
+      // 2. Sin datos locales — intentar leer de Firestore
+      console.log('📡 No hay datos locales, intentando leer de Firestore...');
+      try {
+        const profileData = await FirestoreService.read<ProfileData>('profile', 'data', userId);
+        console.log('📡 Respuesta de Firestore:', profileData);
+        
+        if (profileData && profileData.role && profileData.fullName) {
+          console.log('✅ Perfil completo encontrado en Firestore');
+          
+          const userRole = profileData.role as UserRole;
+          const themeRole = (profileData.theme || userRole) as UserRole;
+          const theme: Theme = ThemeManager.getThemeForRole(themeRole);
+
+          // Guardar en localStorage
+          LocalStorageManager.saveProfile({
+            userId: userId,
+            fullName: profileData.fullName,
+            nickname: profileData.nickname || '',
+            age: profileData.age || 0,
+            role: userRole,
+            theme: theme,
+            selectedModules: profileData.selectedModules || [],
+            createdAt: profileData.createdAt || new Date().toISOString(),
+            updatedAt: profileData.updatedAt || new Date().toISOString(),
+          });
+
+          localStorage.setItem('planiverse_role', profileData.role);
+          localStorage.setItem('planiverse_onboarding_done', 'true');
+
+          // Aplicar tema
+          ThemeManager.applyTheme(theme);
+
+          console.log('✅ Perfil sincronizado, redirigiendo a /inicio');
+          setTimeout(() => {
+            router.push('/inicio');
+          }, 100);
+          return;
+        } else {
+          console.log('⚠️ Perfil incompleto en Firestore');
+        }
+      } catch (err) {
+        console.error('❌ Error leyendo de Firestore:', err);
+      }
+
+      // 3. Usuario nuevo o perfil incompleto, continuar con wizard
+      console.log('🔄 Usuario nuevo o perfil incompleto, continuando con wizard');
+      console.log('🔄 Llamando onAuthSuccess(userId, true)');
+      setIsLoading(false);
+      onAuthSuccess(userId, true);
+    } catch (error) {
+      console.error('❌ Error en handleAuthSuccess:', error);
+      setLocalError('Error al procesar autenticación');
+      hasProcessedAuthRef.current = false;
+      setIsLoading(false);
+    }
+  }, [router, onAuthSuccess]);
+
+  /**
+   * Efecto para detectar ad blocker
+   */
+  useEffect(() => {
+    const detectAdBlocker = async () => {
+      try {
+        const testUrl = 'https://firestore.googleapis.com/';
+        await fetch(testUrl, { method: 'HEAD', mode: 'no-cors' });
+        setAdBlockerDetected(false);
+      } catch (error) {
+        console.error('⚠️ Ad blocker detectado - Firebase está bloqueado');
+        setAdBlockerDetected(true);
+      }
+    };
+
+    detectAdBlocker();
+  }, []);
+
+  /**
+   * Efecto para manejar cambios en el usuario autenticado
+   */
+  useEffect(() => {
+    if (user && loginAttemptedRef.current && !hasProcessedAuthRef.current) {
+      console.log('🔄 Usuario autenticado detectado, procesando...', user.uid);
+      handleAuthSuccess(user.uid);
+    }
+  }, [user, handleAuthSuccess]);
+
+  /**
+   * Efecto para manejar errores de autenticación
+   */
+  useEffect(() => {
+    if (authError && loginAttemptedRef.current && !hasProcessedAuthRef.current) {
+      console.error('❌ Error de autenticación:', authError);
+      setLocalError(authError.message);
+      setIsLoading(false);
+      loginAttemptedRef.current = false;
+      if (onError) {
+        onError({
+          code: authError.code as AuthErrorCode,
+          message: authError.message
+        });
+      }
+    }
+  }, [authError, onError]);
+
+  /**
+   * Maneja el click en el botón de Gmail
+   */
+  const handleGoogleLoginClick = async () => {
+    if (isLoading) return;
+    hasProcessedAuthRef.current = false;
+    loginAttemptedRef.current = true;
+    try {
+      setIsLoading(true);
+      setLocalError(null);
+      console.log('🔐 Intentando login con Google...');
+      await loginWithGoogle();
+      console.log('✅ Login con Google exitoso, esperando procesamiento...');
+    } catch (error) {
+      console.error('❌ Error en login con Google:', error);
+      setIsLoading(false);
+      setLocalError('Error al iniciar sesión con Google');
+    }
+  };
+
+  return (
+    <div className="w-full max-w-md mx-auto">
+      <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
+        {/* Encabezado */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            Bienvenido a Planiverse
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600">
+            Inicia sesión para continuar
+          </p>
+        </div>
+
+        {/* Mensaje de error */}
+        {localError && (
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md"
+          >
+            <p className="text-sm text-red-800">{localError}</p>
+          </div>
+        )}
+
+        {/* ALERTA DE AD BLOCKER */}
+        {adBlockerDetected && (
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="mb-4 p-4 bg-yellow-50 border-2 border-yellow-400 rounded-md"
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">⚠️</span>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-yellow-900 mb-2">
+                  Ad Blocker Detectado
+                </p>
+                <p className="text-sm text-yellow-800 mb-2">
+                  Tu bloqueador de anuncios está bloqueando Firebase. Debes desactivarlo para localhost.
+                </p>
+                <div className="text-xs text-yellow-700 bg-yellow-100 p-2 rounded mt-2">
+                  <p className="font-semibold mb-1">Cómo desactivar:</p>
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>Haz clic en el icono de tu ad blocker</li>
+                    <li>Selecciona "Desactivar en este sitio"</li>
+                    <li>Recarga la página</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* SOLO BOTÓN DE GOOGLE */}
+        <button
+          type="button"
+          onClick={handleGoogleLoginClick}
+          disabled={isLoading}
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          aria-label="Iniciar sesión con Gmail"
+        >
+          <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="#4285F4"
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            />
+          </svg>
+          {isLoading ? 'Autenticando...' : 'Continuar con Google'}
+        </button>
+      </div>
+    </div>
+  );
+}
