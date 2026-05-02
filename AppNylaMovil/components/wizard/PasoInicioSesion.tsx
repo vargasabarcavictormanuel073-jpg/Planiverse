@@ -19,6 +19,7 @@ import { FirestoreService } from '@/firebase/services/firestore.service';
 import { ThemeManager } from '@/lib/auth/services/ThemeManager';
 import { AuthService } from '@/firebase/services/auth.service';
 import PasswordInput from '@/components/ui/CampoEntradaContrasena';
+import { AccessHistoryService } from '@/lib/services/AccessHistoryService';
 
 interface AuthStepProps {
   onAuthSuccess: (userId: string, isNewUser: boolean) => void;
@@ -76,6 +77,9 @@ export default function AuthStep({
           createdAt: new Date().toISOString(),
           expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         });
+
+        // Registrar acceso en el historial
+        AccessHistoryService.record('google');
 
         // 1. Revisar localStorage primero
         const localProfile = LocalStorageManager.getProfile(userId);
@@ -188,6 +192,11 @@ export default function AuthStep({
         loginAttemptedRef.current = false;
       }
       // Si tiene éxito, el useEffect de `user` dispara handleAuthSuccess
+      // (el registro del historial se hace en handleAuthSuccess con método 'google',
+      //  pero para email lo registramos aquí si el login fue exitoso)
+      if (result.success) {
+        AccessHistoryService.record('email');
+      }
     } catch {
       setLocalError('Error al iniciar sesión');
       hasProcessedAuthRef.current = false;
@@ -315,6 +324,11 @@ export default function AuthStep({
                   'Enviar enlace de recuperación'
                 )}
               </button>
+
+              {/* Aviso de spam */}
+              <p className="text-xs text-center mt-2" style={{ color: '#94a3b8' }}>
+                📩 Si no recibes el correo, revisa tu carpeta de <strong style={{ color: '#fde68a' }}>spam</strong> o correo no deseado.
+              </p>
             </form>
           )}
         </div>

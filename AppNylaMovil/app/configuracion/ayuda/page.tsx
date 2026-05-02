@@ -1,5 +1,5 @@
 /**
- * Página de Ayuda - Dentro de la app (con AppLayout)
+ * Página de Ayuda - Dentro de la mm  app (con AppLayout)
  */
 
 'use client';

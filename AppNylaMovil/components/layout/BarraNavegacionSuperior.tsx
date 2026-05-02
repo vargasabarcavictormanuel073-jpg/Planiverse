@@ -190,7 +190,19 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
             href="/configuracion/perfil"
             className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
           >
-            Perfil
+            👤 Perfil
+          </a>
+          <a
+            href="/configuracion/historial-acceso"
+            className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+          >
+            🔐 Historial de Acceso
+          </a>
+          <a
+            href="/configuracion"
+            className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+          >
+            ⚙️ Configuración
           </a>
         </div>
 

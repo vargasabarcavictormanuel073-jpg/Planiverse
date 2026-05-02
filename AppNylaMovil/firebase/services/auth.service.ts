@@ -220,9 +220,13 @@ export const AuthService = {
     switch (code) {
       case 'auth/invalid-email':
         return 'El email no es válido';
+      // Firebase v9+ unifica estos tres en invalid-credential
+      case 'auth/invalid-credential':
       case 'auth/user-not-found':
       case 'auth/wrong-password':
-        return 'Credenciales incorrectas';
+        return 'Email o contraseña incorrectos';
+      case 'auth/user-disabled':
+        return 'Esta cuenta ha sido deshabilitada';
       case 'auth/email-already-in-use':
         return 'Este email ya está registrado';
       case 'auth/weak-password':
@@ -237,8 +241,12 @@ export const AuthService = {
         return 'Solicitud de autenticación cancelada';
       case 'auth/user-token-expired':
         return 'Sesión expirada, por favor inicia sesión nuevamente';
+      case 'auth/too-many-requests':
+        return 'Demasiados intentos fallidos. Espera unos minutos o restablece tu contraseña';
+      case 'auth/operation-not-allowed':
+        return 'Este método de inicio de sesión no está habilitado';
       default:
-        return 'Error de autenticación';
+        return `Error de autenticación (${code})`;
     }
   }
 };
