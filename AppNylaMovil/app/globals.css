@@ -231,9 +231,10 @@ html.dark .space-y-3 svg {
 }
 
 /* Inputs siempre visibles - máxima especificidad */
-html body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-html body textarea,
-html body select {
+/* Excluye inputs dentro del wizard de autenticación (fondo oscuro) */
+html body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.input-dark):not(.auth-form input),
+html body textarea:not(.input-dark),
+html body select:not(.input-dark) {
   background-color: #ffffff !important;
   color: #111827 !important;
   -webkit-text-fill-color: #111827 !important;
@@ -248,6 +249,38 @@ html body textarea::placeholder {
   -webkit-text-fill-color: #9ca3af !important;
   opacity: 1 !important;
   font-weight: 400 !important;
+}
+
+/* Inputs en contexto oscuro (wizard de login) */
+html body .auth-form input,
+html body input.input-dark,
+html body textarea.input-dark {
+  background-color: #334155 !important;
+  color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  caret-color: #f1f5f9 !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+
+html body .auth-form input::placeholder,
+html body input.input-dark::placeholder,
+html body textarea.input-dark::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  opacity: 1 !important;
+  font-weight: 400 !important;
+}
+
+/* Fix autofill navegador en inputs oscuros */
+html body .auth-form input:-webkit-autofill,
+html body .auth-form input:-webkit-autofill:hover,
+html body .auth-form input:-webkit-autofill:focus,
+html body input.input-dark:-webkit-autofill,
+html body input.input-dark:-webkit-autofill:hover,
+html body input.input-dark:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #334155 inset !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+  caret-color: #f1f5f9 !important;
 }
 
 html.dark body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),

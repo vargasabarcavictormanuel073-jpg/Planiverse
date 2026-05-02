@@ -176,7 +176,14 @@ export default function AuthStep({
     try {
       const result = await AuthService.login(emailInput, passwordInput);
       if (!result.success) {
-        setLocalError(result.error?.message || 'Credenciales incorrectas');
+        const msg = result.error?.message || 'Credenciales incorrectas';
+        const code = result.error?.code || '';
+        // Si el error es invalid-credential, puede ser cuenta de Google sin contraseña
+        if (code === 'auth/invalid-credential' || code === 'auth/user-not-found' || code === 'auth/wrong-password') {
+          setLocalError('Email o contraseña incorrectos. Si te registraste con Google, usa el botón de Google.');
+        } else {
+          setLocalError(msg);
+        }
         hasProcessedAuthRef.current = false;
         loginAttemptedRef.current = false;
       }
@@ -219,7 +226,7 @@ export default function AuthStep({
   if (showForgotPassword) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-slate-800/60 backdrop-blur-md rounded-3xl shadow-2xl p-8 sm:p-10 border border-white/10">
+        <div className="bg-slate-800 rounded-3xl shadow-2xl p-8 sm:p-10 border border-white/10">
           {/* Botón volver */}
           <button
             onClick={handleBackFromForgot}
@@ -260,7 +267,7 @@ export default function AuthStep({
             </div>
           ) : (
             /* ── Formulario de recuperación ── */
-            <form onSubmit={handleForgotPassword} className="space-y-4">
+            <form onSubmit={handleForgotPassword} className="auth-form space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Correo electrónico
@@ -271,7 +278,8 @@ export default function AuthStep({
                   onChange={(e) => setForgotEmail(e.target.value)}
                   placeholder="tu@correo.com"
                   required
-                  className="w-full px-4 py-3 bg-slate-700/60 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+                  className="input-dark w-full px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500 transition-colors border"
+                  style={{ colorScheme: 'dark' }}
                 />
               </div>
 
@@ -345,7 +353,7 @@ export default function AuthStep({
         )}
 
         {/* Formulario email + contraseña */}
-        <form onSubmit={handleEmailLogin} className="space-y-3 mb-4">
+        <form onSubmit={handleEmailLogin} className="auth-form space-y-3 mb-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">Correo electrónico</label>
             <input
@@ -354,7 +362,8 @@ export default function AuthStep({
               onChange={(e) => setEmailInput(e.target.value)}
               placeholder="tu@correo.com"
               required
-              className="w-full px-4 py-3 bg-slate-700/60 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="input-dark w-full px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500 transition-colors border"
+              style={{ colorScheme: 'dark' }}
             />
           </div>
 
