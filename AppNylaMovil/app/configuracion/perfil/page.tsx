@@ -46,6 +46,12 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Estado de edición
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ fullName: '', nickname: '', age: '' });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
   useEffect(() => {
     const loadProfile = async () => {
       if (!user) {
@@ -151,6 +157,53 @@ export default function ProfilePage() {
     }
   };
 
+  const handleStartEdit = () => {
+    setEditForm({
+      fullName: profile.fullName === 'No especificado' ? '' : profile.fullName,
+      nickname: profile.nickname === 'No especificado' ? '' : profile.nickname,
+      age: profile.age === 'No especificado' ? '' : profile.age,
+    });
+    setIsEditing(true);
+    setSaveSuccess(false);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditForm({ fullName: '', nickname: '', age: '' });
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    setError(null);
+    try {
+      const updates: Partial<ProfileData> = {
+        fullName: editForm.fullName || profile.fullName,
+        nickname: editForm.nickname || profile.nickname,
+        age: editForm.age ? parseInt(editForm.age) : undefined,
+      };
+      await FirestoreService.update<ProfileData>('profile', 'data', updates, user.uid);
+      setProfile(prev => ({
+        ...prev,
+        fullName: updates.fullName || prev.fullName,
+        nickname: updates.nickname || prev.nickname,
+        age: updates.age?.toString() || prev.age,
+      }));
+      // Actualizar localStorage también
+      const localProfileData = localStorage.getItem('planiverse_profile');
+      const parsed = localProfileData ? JSON.parse(localProfileData) : {};
+      localStorage.setItem('planiverse_profile', JSON.stringify({ ...parsed, ...updates }));
+      setIsEditing(false);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      setError('Error al guardar los cambios');
+      console.error(err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleDeleteAccount = async () => {
     try {
       setIsLoading(true);
@@ -202,7 +255,42 @@ export default function ProfilePage() {
 
         {/* Información detallada */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-6">Información Personal</h3>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-900">Información Personal</h3>
+            {!isEditing ? (
+              <button
+                onClick={handleStartEdit}
+                className="flex items-center gap-2 px-4 py-2 text-blue-600 border-2 border-blue-300 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Editar Perfil
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSaveProfile}
+                  disabled={isSaving}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-60"
+                >
+                  {isSaving ? '⏳ Guardando...' : '💾 Guardar'}
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
+          </div>
+
+          {saveSuccess && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm font-medium">
+              ✅ Perfil actualizado correctamente
+            </div>
+          )}
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {user && (
@@ -214,17 +302,48 @@ export default function ProfilePage() {
 
             <div className="bg-gray-50 rounded-lg p-4">
               <label className="block text-sm font-medium text-gray-500 mb-2">🎂 Edad</label>
-              <p className="text-lg text-gray-900 font-medium">{profile.age} años</p>
+              {isEditing ? (
+                <input
+                  type="number"
+                  value={editForm.age}
+                  onChange={(e) => setEditForm(f => ({ ...f, age: e.target.value }))}
+                  placeholder="Tu edad"
+                  min="1" max="120"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 text-gray-900 bg-white font-medium"
+                />
+              ) : (
+                <p className="text-lg text-gray-900 font-medium">{profile.age} años</p>
+              )}
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
               <label className="block text-sm font-medium text-gray-500 mb-2">👤 Nombre Completo</label>
-              <p className="text-lg text-gray-900 font-medium">{profile.fullName}</p>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={editForm.fullName}
+                  onChange={(e) => setEditForm(f => ({ ...f, fullName: e.target.value }))}
+                  placeholder="Tu nombre completo"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 text-gray-900 bg-white font-medium"
+                />
+              ) : (
+                <p className="text-lg text-gray-900 font-medium">{profile.fullName}</p>
+              )}
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4">
               <label className="block text-sm font-medium text-gray-500 mb-2">✏️ Apodo</label>
-              <p className="text-lg text-gray-900 font-medium">{profile.nickname}</p>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={editForm.nickname}
+                  onChange={(e) => setEditForm(f => ({ ...f, nickname: e.target.value }))}
+                  placeholder="Tu apodo"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 text-gray-900 bg-white font-medium"
+                />
+              ) : (
+                <p className="text-lg text-gray-900 font-medium">{profile.nickname}</p>
+              )}
             </div>
           </div>
         </div>

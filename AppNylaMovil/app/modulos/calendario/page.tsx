@@ -37,10 +37,11 @@ interface Event {
 export default function CalendarPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useFirebaseAuth();
-  const { data: events, loading, error, addItem, deleteItem } = useFirestore<Event>('calendar');
+  const { data: events, loading, error, addItem, updateItem, deleteItem } = useFirestore<Event>('calendar');
   
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [time, setTime] = useState('');
   const [eventType, setEventType] = useState('');
@@ -91,23 +92,37 @@ export default function CalendarPage() {
 
   const handleAddEvent = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newEvent: Event = {
-      title,
-      date: selectedDate,
-    };
-    
-    // Solo agregar time si tiene valor
-    if (time) {
-      newEvent.time = time;
+
+    if (editingId) {
+      const updates: Partial<Event> = { title };
+      if (time) updates.time = time;
+      if (eventType) updates.type = eventType;
+      await updateItem(editingId, updates);
+      setEditingId(null);
+    } else {
+      const newEvent: Event = { title, date: selectedDate };
+      if (time) newEvent.time = time;
+      if (eventType) newEvent.type = eventType;
+      await addItem(newEvent);
     }
-    
-    // Solo agregar type si tiene valor
-    if (eventType) {
-      newEvent.type = eventType;
-    }
-    
-    await addItem(newEvent);
+
+    setTitle('');
+    setTime('');
+    setEventType('');
+    setShowForm(false);
+  };
+
+  const handleEdit = (event: Event) => {
+    if (!event.id) return;
+    setEditingId(event.id);
+    setTitle(event.title);
+    setTime(event.time || '');
+    setEventType(event.type || '');
+    setShowForm(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
     setTitle('');
     setTime('');
     setEventType('');
@@ -283,8 +298,8 @@ export default function CalendarPage() {
           {showForm && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mt-4 animate-scale-in">
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">✨</span>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Nuevo Evento</h3>
+                <span className="text-2xl">{editingId ? '✏️' : '✨'}</span>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{editingId ? 'Editar Evento' : 'Nuevo Evento'}</h3>
               </div>
               <form onSubmit={handleAddEvent} className="space-y-4">
                 <div>
@@ -323,13 +338,20 @@ export default function CalendarPage() {
                   </select>
                 </div>
 
-                <button
-                  type="submit"
-                  style={{ backgroundColor: 'var(--color-primary)' }}
-                  className="w-full px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
-                >
-                  Guardar Evento
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    style={{ backgroundColor: 'var(--color-primary)' }}
+                    className="flex-1 px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+                  >
+                    {editingId ? '💾 Guardar Cambios' : 'Guardar Evento'}
+                  </button>
+                  {editingId && (
+                    <button type="button" onClick={handleCancelEdit} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                      Cancelar
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
           )}
@@ -393,6 +415,15 @@ export default function CalendarPage() {
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleEdit(event)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                      title="Editar evento"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
                     </button>
                   </div>

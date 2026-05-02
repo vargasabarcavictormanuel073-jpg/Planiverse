@@ -39,6 +39,7 @@ export default function RemindersPage() {
   const { data: reminders, loading, error, addItem, updateItem, deleteItem } = useFirestore<Reminder>('reminders');
   
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -71,14 +72,33 @@ export default function RemindersPage() {
 
   const handleAddReminder = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newReminder: Reminder = {
-      title,
-      date,
-      time,
-      completed: false,
-    };
-    
-    await addItem(newReminder);
+
+    if (editingId) {
+      await updateItem(editingId, { title, date, time });
+      setEditingId(null);
+    } else {
+      const newReminder: Reminder = { title, date, time, completed: false };
+      await addItem(newReminder);
+    }
+
+    setTitle('');
+    setDate('');
+    setTime('');
+    setShowForm(false);
+  };
+
+  const handleEdit = (reminder: Reminder) => {
+    if (!reminder.id) return;
+    setEditingId(reminder.id);
+    setTitle(reminder.title);
+    setDate(reminder.date);
+    setTime(reminder.time);
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
     setTitle('');
     setDate('');
     setTime('');
@@ -197,7 +217,7 @@ export default function RemindersPage() {
 
       <div className="mb-6">
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { if (editingId) { handleCancelEdit(); } else { setShowForm(!showForm); } }}
           style={{ backgroundColor: 'var(--color-primary)' }}
           className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 font-medium"
         >
@@ -222,8 +242,8 @@ export default function RemindersPage() {
       {showForm && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 animate-scale-in">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-2xl">✨</span>
-            <h3 className="text-lg font-semibold text-gray-900">Nuevo Recordatorio</h3>
+            <span className="text-2xl">{editingId ? '✏️' : '✨'}</span>
+            <h3 className="text-lg font-semibold text-gray-900">{editingId ? 'Editar Recordatorio' : 'Nuevo Recordatorio'}</h3>
           </div>
           <form onSubmit={handleAddReminder} className="space-y-4">
             <div>
@@ -262,13 +282,20 @@ export default function RemindersPage() {
               </div>
             </div>
 
-            <button
-              type="submit"
-              style={{ backgroundColor: 'var(--color-primary)' }}
-              className="w-full px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
-            >
-              Guardar Recordatorio
-            </button>
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                style={{ backgroundColor: 'var(--color-primary)' }}
+                className="flex-1 px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+              >
+                {editingId ? '💾 Guardar Cambios' : 'Guardar Recordatorio'}
+              </button>
+              {editingId && (
+                <button type="button" onClick={handleCancelEdit} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                  Cancelar
+                </button>
+              )}
+            </div>
           </form>
         </div>
       )}
@@ -332,6 +359,15 @@ export default function RemindersPage() {
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => handleEdit(reminder)}
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  title="Editar recordatorio"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                 </button>
               </div>

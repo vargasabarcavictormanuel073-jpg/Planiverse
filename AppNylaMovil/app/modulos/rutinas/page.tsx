@@ -38,6 +38,7 @@ export default function RoutinesPage() {
   const { data: routines, loading, error, addItem, updateItem, deleteItem } = useFirestore<Routine>('routines');
   
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily');
   const [searchQuery, setSearchQuery] = useState('');
@@ -69,13 +70,31 @@ export default function RoutinesPage() {
 
   const handleAddRoutine = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newRoutine: Routine = {
-      name,
-      frequency,
-      active: true,
-    };
-    
-    await addItem(newRoutine);
+
+    if (editingId) {
+      await updateItem(editingId, { name, frequency });
+      setEditingId(null);
+    } else {
+      const newRoutine: Routine = { name, frequency, active: true };
+      await addItem(newRoutine);
+    }
+
+    setName('');
+    setFrequency('daily');
+    setShowForm(false);
+  };
+
+  const handleEdit = (routine: Routine) => {
+    if (!routine.id) return;
+    setEditingId(routine.id);
+    setName(routine.name);
+    setFrequency(routine.frequency);
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
     setName('');
     setFrequency('daily');
     setShowForm(false);
@@ -180,7 +199,7 @@ export default function RoutinesPage() {
 
       <div className="mb-6">
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { if (editingId) { handleCancelEdit(); } else { setShowForm(!showForm); } }}
           style={{ backgroundColor: 'var(--color-primary)' }}
           className="px-6 py-3 text-white rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 font-medium"
         >
@@ -205,8 +224,8 @@ export default function RoutinesPage() {
       {showForm && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 animate-scale-in">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-2xl">✨</span>
-            <h3 className="text-lg font-semibold text-gray-900">Nueva Rutina</h3>
+            <span className="text-2xl">{editingId ? '✏️' : '✨'}</span>
+            <h3 className="text-lg font-semibold text-gray-900">{editingId ? 'Editar Rutina' : 'Nueva Rutina'}</h3>
           </div>
           <form onSubmit={handleAddRoutine} className="space-y-4">
             <div>
@@ -233,13 +252,20 @@ export default function RoutinesPage() {
               </select>
             </div>
 
-            <button
-              type="submit"
-              style={{ backgroundColor: 'var(--color-primary)' }}
-              className="w-full px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
-            >
-              Guardar Rutina
-            </button>
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                style={{ backgroundColor: 'var(--color-primary)' }}
+                className="flex-1 px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity font-medium"
+              >
+                {editingId ? '💾 Guardar Cambios' : 'Guardar Rutina'}
+              </button>
+              {editingId && (
+                <button type="button" onClick={handleCancelEdit} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                  Cancelar
+                </button>
+              )}
+            </div>
           </form>
         </div>
       )}
@@ -299,6 +325,12 @@ export default function RoutinesPage() {
                 className="w-full px-4 py-2 text-red-600 border-2 border-red-300 rounded-lg hover:bg-red-50 transition-colors font-medium"
               >
                 🗑️ Eliminar
+              </button>
+              <button
+                onClick={() => handleEdit(routine)}
+                className="w-full mt-2 px-4 py-2 text-blue-600 border-2 border-blue-300 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+              >
+                ✏️ Editar
               </button>
             </div>
           ))
