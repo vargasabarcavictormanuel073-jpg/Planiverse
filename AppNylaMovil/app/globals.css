@@ -213,6 +213,15 @@ html:not(.dark) .text-gray-900 {
   color: #111827 !important;
 }
 
+/* Excepción: dentro de .auth-dark los colores se respetan tal cual */
+html:not(.dark) .auth-dark .text-gray-400 { color: #94a3b8 !important; }
+html:not(.dark) .auth-dark .text-gray-300 { color: #d1d5db !important; }
+html:not(.dark) .auth-dark .text-gray-500 { color: #6b7280 !important; }
+html:not(.dark) .auth-dark .text-white    { color: #ffffff !important; }
+html:not(.dark) .auth-dark .text-blue-300 { color: #93c5fd !important; }
+html:not(.dark) .auth-dark .text-red-300  { color: #fca5a5 !important; }
+html:not(.dark) .auth-dark .text-red-200  { color: #fecaca !important; }
+
 /* Iconos SVG visibles en ambos modos (excepto navbar) */
 html:not(.dark) .stat-card svg,
 html:not(.dark) .quick-access-card svg,

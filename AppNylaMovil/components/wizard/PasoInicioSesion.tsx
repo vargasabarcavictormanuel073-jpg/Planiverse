@@ -226,11 +226,14 @@ export default function AuthStep({
   if (showForgotPassword) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-slate-800 rounded-3xl shadow-2xl p-8 sm:p-10 border border-white/10">
+        <div className="auth-dark bg-slate-800 rounded-3xl shadow-2xl p-8 sm:p-10 border border-white/10">
           {/* Botón volver */}
           <button
             onClick={handleBackFromForgot}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6 text-sm"
+            className="flex items-center gap-2 mb-6 text-sm"
+            style={{ color: '#94a3b8' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#94a3b8')}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -242,22 +245,28 @@ export default function AuthStep({
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 bg-blue-900/40">
               🔑
             </div>
-            <h2 className="text-2xl font-bold text-white mb-1">¿Olvidaste tu contraseña?</h2>
-            <p className="text-gray-400 text-sm">Te enviaremos un enlace para restablecerla</p>
+            <h2 className="text-2xl font-bold mb-1" style={{ color: '#ffffff' }}>¿Olvidaste tu contraseña?</h2>
+            <p className="text-sm" style={{ color: '#94a3b8' }}>Te enviaremos un enlace para restablecerla</p>
           </div>
 
           {forgotStatus === 'sent' ? (
             /* ── Confirmación de envío ── */
             <div className="text-center py-4">
               <div className="text-5xl mb-4">📬</div>
-              <h3 className="text-lg font-bold text-white mb-2">¡Correo enviado!</h3>
-              <p className="text-gray-300 text-sm mb-2">
+              <h3 className="text-lg font-bold mb-2" style={{ color: '#ffffff' }}>¡Correo enviado!</h3>
+              <p className="text-sm mb-2" style={{ color: '#d1d5db' }}>
                 Revisa tu bandeja en{' '}
-                <span className="font-semibold text-blue-300">{forgotEmail}</span>
+                <span className="font-semibold" style={{ color: '#93c5fd' }}>{forgotEmail}</span>
               </p>
-              <p className="text-gray-400 text-xs mb-6">
-                Si no lo ves, revisa la carpeta de spam. El enlace expira en 1 hora.
-              </p>
+              {/* Aviso de spam destacado */}
+              <div className="my-4 p-3 rounded-xl border flex items-start gap-2 text-left"
+                style={{ backgroundColor: 'rgba(234,179,8,0.15)', borderColor: 'rgba(234,179,8,0.4)' }}>
+                <span className="text-lg">⚠️</span>
+                <p className="text-xs" style={{ color: '#fde68a' }}>
+                  <strong>¿No lo ves?</strong> Revisa tu carpeta de <strong>spam</strong> o correo no deseado. 
+                  A veces los correos de recuperación llegan ahí. El enlace expira en <strong>1 hora</strong>.
+                </p>
+              </div>
               <button
                 onClick={handleBackFromForgot}
                 className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:opacity-90 transition-opacity"
@@ -269,7 +278,7 @@ export default function AuthStep({
             /* ── Formulario de recuperación ── */
             <form onSubmit={handleForgotPassword} className="auth-form space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{ color: '#d1d5db' }}>
                   Correo electrónico
                 </label>
                 <input
@@ -285,7 +294,7 @@ export default function AuthStep({
 
               {forgotStatus === 'error' && (
                 <div className="p-3 bg-red-500/20 border border-red-400/50 rounded-lg">
-                  <p className="text-sm text-red-300">{forgotError}</p>
+                  <p className="text-sm" style={{ color: '#fca5a5' }}>{forgotError}</p>
                 </div>
               )}
 
