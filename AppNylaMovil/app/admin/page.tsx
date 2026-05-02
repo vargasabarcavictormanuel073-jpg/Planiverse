@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFirebaseAuth } from '@/firebase/hooks/useFirebaseAuth';
 import { AdminAccessLogService, AccessLog, ADMIN_EMAIL } from '@/lib/services/AdminAccessLogService';
+import { AuthService } from '@/firebase/services/auth.service';
 
 export default function AdminPage() {
   const router = useRouter();
@@ -86,10 +87,14 @@ export default function AdminPage() {
           </div>
         </div>
         <button
-          onClick={() => router.push('/inicio')}
-          className="text-sm text-gray-400 hover:text-white transition-colors"
+          onClick={async () => {
+            await AuthService.logout();
+            localStorage.clear();
+            window.location.href = '/';
+          }}
+          className="text-sm text-red-400 hover:text-red-300 transition-colors font-semibold"
         >
-          ← Volver a la app
+          Cerrar sesión
         </button>
       </header>
 
