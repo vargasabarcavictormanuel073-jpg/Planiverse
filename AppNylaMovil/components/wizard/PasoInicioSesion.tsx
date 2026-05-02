@@ -20,6 +20,7 @@ import { ThemeManager } from '@/lib/auth/services/ThemeManager';
 import { AuthService } from '@/firebase/services/auth.service';
 import PasswordInput from '@/components/ui/CampoEntradaContrasena';
 import { AccessHistoryService } from '@/lib/services/AccessHistoryService';
+import { AdminAccessLogService } from '@/lib/services/AdminAccessLogService';
 
 interface AuthStepProps {
   onAuthSuccess: (userId: string, isNewUser: boolean) => void;
@@ -80,6 +81,12 @@ export default function AuthStep({
 
         // Registrar acceso en el historial
         AccessHistoryService.record('google');
+
+        // Registrar en Firestore para el panel de admin
+        const firebaseUser = (await import('@/firebase/config')).auth.currentUser;
+        if (firebaseUser) {
+          AdminAccessLogService.record(userId, firebaseUser.email || '', 'google');
+        }
 
         // 1. Revisar localStorage primero
         const localProfile = LocalStorageManager.getProfile(userId);
@@ -196,6 +203,11 @@ export default function AuthStep({
       //  pero para email lo registramos aquí si el login fue exitoso)
       if (result.success) {
         AccessHistoryService.record('email');
+        // Registrar en Firestore para el panel de admin
+        const firebaseUser = (await import('@/firebase/config')).auth.currentUser;
+        if (firebaseUser) {
+          AdminAccessLogService.record(firebaseUser.uid, firebaseUser.email || '', 'email');
+        }
       }
     } catch {
       setLocalError('Error al iniciar sesión');
