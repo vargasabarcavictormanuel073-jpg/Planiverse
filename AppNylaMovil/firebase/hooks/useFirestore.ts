@@ -1,28 +1,15 @@
 /**
  * useFirestore - Hook personalizado para operaciones CRUD con Firestore
- * 
- * Este hook proporciona una interfaz simple para trabajar con colecciones de Firestore.
- * Se suscribe automáticamente a cambios en tiempo real y actualiza el estado.
- * 
- * Parámetros:
- * - collectionName: Nombre de la colección en Firestore (ej: 'tasks', 'notes')
- * 
- * Retorna:
- * - data: Array de documentos de la colección
- * - loading: Estado de carga
- * - error: Errores si ocurren
- * - addItem: Función para agregar un nuevo documento
- * - updateItem: Función para actualizar un documento existente
- * - deleteItem: Función para eliminar un documento
- * - refreshData: Función para refrescar los datos manualmente
- * 
- * El hook requiere que el usuario esté autenticado y limpia automáticamente
- * las suscripciones cuando el componente se desmonta.
+ *
+ * Soporta modo offline: las operaciones que fallan por falta de conexión
+ * se guardan en una cola local y se sincronizan automáticamente cuando
+ * vuelve la conexión.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FirestoreService } from '@/firebase/services/firestore.service';
 import { CacheService } from '@/lib/services/CacheService';
+import { OfflineQueueService } from '@/lib/services/OfflineQueueService';
 import { useFirebaseAuth } from './useFirebaseAuth';
 
 interface UseFirestore<T> {
@@ -30,22 +17,54 @@ interface UseFirestore<T> {
   loading: boolean;
   error: Error | null;
   isFromCache: boolean;
+  pendingSync: number;
   addItem: (item: Omit<T, 'id'>) => Promise<void>;
   updateItem: (id: string, updates: Partial<T>) => Promise<void>;
   deleteItem: (id: string) => Promise<void>;
   refreshData: () => Promise<void>;
 }
 
-export function useFirestore<T>(collectionName: string): UseFirestore<T> {
+export function useFirestore<T extends { id?: string }>(collectionName: string): UseFirestore<T> {
   const { user } = useFirebaseAuth();
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [isFromCache, setIsFromCache] = useState<boolean>(false);
+  const [pendingSync, setPendingSync] = useState<number>(0);
+  const isSyncing = useRef(false);
 
   const cacheKey = `${collectionName}_${user?.uid || 'public'}`;
 
-  // Suscribirse a cambios en tiempo real
+  // ── Sincronizar cola offline cuando vuelve la conexión ──────────────────
+  const flushQueue = async () => {
+    if (!user || isSyncing.current) return;
+    const queue = OfflineQueueService.getAll().filter(
+      item => item.collection === collectionName && item.userId === user.uid
+    );
+    if (queue.length === 0) return;
+
+    isSyncing.current = true;
+    for (const item of queue) {
+      try {
+        if (item.operation === 'create') {
+          await FirestoreService.create(collectionName, item.data, user.uid);
+        } else if (item.operation === 'update' && item.docId) {
+          await FirestoreService.update(collectionName, item.docId, item.data as object, user.uid);
+        } else if (item.operation === 'delete' && item.docId) {
+          await FirestoreService.delete(collectionName, item.docId, user.uid);
+        }
+        OfflineQueueService.remove(item.id);
+      } catch {
+        // Si falla de nuevo, dejar en la cola para el próximo intento
+      }
+    }
+    isSyncing.current = false;
+    setPendingSync(OfflineQueueService.getAll().filter(
+      i => i.collection === collectionName && i.userId === user.uid
+    ).length);
+  };
+
+  // ── Suscripción a Firestore + caché ─────────────────────────────────────
   useEffect(() => {
     if (!user) {
       setData([]);
@@ -53,7 +72,7 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
       return;
     }
 
-    // 1. Intentar cargar del caché primero (solo si hay datos)
+    // Cargar caché inmediatamente
     CacheService.get<T[]>(cacheKey).then((cached) => {
       if (cached && cached.length > 0) {
         setData(cached);
@@ -63,8 +82,11 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
     });
 
     setError(null);
+    setPendingSync(OfflineQueueService.getAll().filter(
+      i => i.collection === collectionName && i.userId === user.uid
+    ).length);
 
-    // 2. Suscribirse a cambios en tiempo real (sincronización en background)
+    // Suscripción en tiempo real
     const unsubscribe = FirestoreService.subscribe<T>(
       collectionName,
       user.uid,
@@ -72,7 +94,6 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
         setData(newData);
         setIsFromCache(false);
         setLoading(false);
-        // Guardar en caché solo si hay datos
         if (newData.length > 0) {
           CacheService.set(cacheKey, newData);
         }
@@ -83,86 +104,148 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
       }
     );
 
-    // Cleanup: desuscribirse cuando el componente se desmonte o cambie el usuario
-    return () => unsubscribe();
+    // Listener de reconexión — sincronizar cola cuando vuelve internet
+    const handleOnline = () => {
+      flushQueue();
+    };
+    window.addEventListener('online', handleOnline);
+
+    // Si ya hay conexión al montar, intentar sincronizar cola pendiente
+    if (navigator.onLine) {
+      flushQueue();
+    }
+
+    return () => {
+      unsubscribe();
+      window.removeEventListener('online', handleOnline);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionName, user, cacheKey]);
 
-  /**
-   * Agregar nuevo item
-   */
+  // ── addItem ──────────────────────────────────────────────────────────────
   const addItem = async (item: Omit<T, 'id'>): Promise<void> => {
-    if (!user) {
-      setError(new Error('Usuario no autenticado'));
+    if (!user) { setError(new Error('Usuario no autenticado')); return; }
+
+    // Optimistic update: agregar al estado local con ID temporal
+    const tempId = `temp_${crypto.randomUUID()}`;
+    const tempItem = { ...item, id: tempId } as T;
+    setData(prev => {
+      const updated = [...prev, tempItem];
+      CacheService.set(cacheKey, updated);
+      return updated;
+    });
+
+    if (!navigator.onLine) {
+      // Sin internet: encolar para después
+      OfflineQueueService.enqueue({
+        operation: 'create',
+        collection: collectionName,
+        data: item,
+        userId: user.uid,
+      });
+      setPendingSync(prev => prev + 1);
       return;
     }
 
     try {
       setError(null);
       await FirestoreService.create(collectionName, item, user.uid);
-      // La suscripción actualizará automáticamente el estado
+      // La suscripción reemplazará el item temporal con el real
     } catch (err) {
-      const error = err as Error;
-      setError(error);
-      throw error;
+      // Si falla por red, encolar
+      OfflineQueueService.enqueue({
+        operation: 'create',
+        collection: collectionName,
+        data: item,
+        userId: user.uid,
+      });
+      setPendingSync(prev => prev + 1);
     }
   };
 
-  /**
-   * Actualizar item existente
-   */
+  // ── updateItem ───────────────────────────────────────────────────────────
   const updateItem = async (id: string, updates: Partial<T>): Promise<void> => {
-    if (!user) {
-      setError(new Error('Usuario no autenticado'));
+    if (!user) { setError(new Error('Usuario no autenticado')); return; }
+
+    // Optimistic update
+    setData(prev => {
+      const updated = prev.map(item => item.id === id ? { ...item, ...updates } : item);
+      CacheService.set(cacheKey, updated);
+      return updated;
+    });
+
+    if (!navigator.onLine) {
+      OfflineQueueService.enqueue({
+        operation: 'update',
+        collection: collectionName,
+        docId: id,
+        data: updates,
+        userId: user.uid,
+      });
+      setPendingSync(prev => prev + 1);
       return;
     }
 
     try {
       setError(null);
       await FirestoreService.update(collectionName, id, updates, user.uid);
-      // La suscripción actualizará automáticamente el estado
     } catch (err) {
-      const error = err as Error;
-      setError(error);
-      throw error;
+      OfflineQueueService.enqueue({
+        operation: 'update',
+        collection: collectionName,
+        docId: id,
+        data: updates,
+        userId: user.uid,
+      });
+      setPendingSync(prev => prev + 1);
     }
   };
 
-  /**
-   * Eliminar item
-   */
+  // ── deleteItem ───────────────────────────────────────────────────────────
   const deleteItem = async (id: string): Promise<void> => {
-    if (!user) {
-      setError(new Error('Usuario no autenticado'));
+    if (!user) { setError(new Error('Usuario no autenticado')); return; }
+
+    // Optimistic update
+    setData(prev => {
+      const updated = prev.filter(item => item.id !== id);
+      CacheService.set(cacheKey, updated);
+      return updated;
+    });
+
+    if (!navigator.onLine) {
+      OfflineQueueService.enqueue({
+        operation: 'delete',
+        collection: collectionName,
+        docId: id,
+        userId: user.uid,
+      });
+      setPendingSync(prev => prev + 1);
       return;
     }
 
     try {
       setError(null);
       await FirestoreService.delete(collectionName, id, user.uid);
-      // La suscripción actualizará automáticamente el estado
     } catch (err) {
-      const error = err as Error;
-      setError(error);
-      throw error;
+      OfflineQueueService.enqueue({
+        operation: 'delete',
+        collection: collectionName,
+        docId: id,
+        userId: user.uid,
+      });
+      setPendingSync(prev => prev + 1);
     }
   };
 
-  /**
-   * Refrescar datos manualmente
-   */
+  // ── refreshData ──────────────────────────────────────────────────────────
   const refreshData = async (): Promise<void> => {
-    if (!user) {
-      setError(new Error('Usuario no autenticado'));
-      return;
-    }
-
+    if (!user) { setError(new Error('Usuario no autenticado')); return; }
     try {
       setLoading(true);
       setError(null);
       const newData = await FirestoreService.readAll<T>(collectionName, user.uid);
       setData(newData);
       setIsFromCache(false);
-      // Actualizar caché
       if (newData.length > 0) {
         await CacheService.set(cacheKey, newData);
       }
@@ -173,14 +256,5 @@ export function useFirestore<T>(collectionName: string): UseFirestore<T> {
     }
   };
 
-  return {
-    data,
-    loading,
-    error,
-    isFromCache,
-    addItem,
-    updateItem,
-    deleteItem,
-    refreshData
-  };
+  return { data, loading, error, isFromCache, pendingSync, addItem, updateItem, deleteItem, refreshData };
 }
