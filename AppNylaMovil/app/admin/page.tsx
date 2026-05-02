@@ -75,7 +75,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="admin-page min-h-screen bg-gray-950 text-white">
       {/* Header */}
       <header className="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -117,7 +117,8 @@ export default function AdminPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Buscar por correo, dispositivo o plataforma..."
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+            className="input-dark w-full px-4 py-3 rounded-xl focus:outline-none focus:border-blue-500 transition-colors border"
+            style={{ colorScheme: 'dark' }}
           />
         </div>
 

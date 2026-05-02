@@ -20,7 +20,7 @@ import { ThemeManager } from '@/lib/auth/services/ThemeManager';
 import { AuthService } from '@/firebase/services/auth.service';
 import PasswordInput from '@/components/ui/CampoEntradaContrasena';
 import { AccessHistoryService } from '@/lib/services/AccessHistoryService';
-import { AdminAccessLogService } from '@/lib/services/AdminAccessLogService';
+import { AdminAccessLogService, ADMIN_EMAIL } from '@/lib/services/AdminAccessLogService';
 
 interface AuthStepProps {
   onAuthSuccess: (userId: string, isNewUser: boolean) => void;
@@ -86,6 +86,12 @@ export default function AuthStep({
         const firebaseUser = (await import('@/firebase/config')).auth.currentUser;
         if (firebaseUser) {
           AdminAccessLogService.record(userId, firebaseUser.email || '', 'google');
+        }
+
+        // Si es admin, redirigir directamente al panel
+        if (firebaseUser && firebaseUser.email === ADMIN_EMAIL) {
+          setTimeout(() => router.push('/admin'), 100);
+          return;
         }
 
         // 1. Revisar localStorage primero
