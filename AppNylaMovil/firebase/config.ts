@@ -15,7 +15,7 @@
 
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFirestore, Firestore, enableIndexedDbPersistence } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -37,6 +37,21 @@ try {
   db = getFirestore(app);
 } catch {
   db = getFirestore(app);
+}
+
+// Activar persistencia offline nativa de Firestore (IndexedDB)
+// Esto hace que Firestore guarde y sincronice operaciones automáticamente
+// cuando no hay internet — sin necesidad de lógica manual
+if (typeof window !== 'undefined') {
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      // Múltiples pestañas abiertas — la persistencia solo funciona en una
+      console.warn('Firestore offline: múltiples pestañas abiertas');
+    } else if (err.code === 'unimplemented') {
+      // El navegador no soporta IndexedDB
+      console.warn('Firestore offline: navegador no soportado');
+    }
+  });
 }
 
 export { app, auth, db };
